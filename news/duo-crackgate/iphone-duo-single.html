@@ -41,7 +41,8 @@
 .aju-vn .aju-vn-scene[hidden]{display:grid!important;opacity:0;pointer-events:none}
 .aju-vn .aju-vn-stage{position:relative;width:min(92%,calc(78svh * 600 / 668));aspect-ratio:600/668}
 .aju-vn .aju-vn-stage video,.aju-vn .aju-vn-stage .aju-vn-still{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.aju-vn .aju-vn-stage svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.aju-vn .aju-vn-stage svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:2}
+.aju-vn .aju-vn-stage .aju-vn-still.aju-vn-top{z-index:1}
 .aju-vn .aju-vn-shake{animation:aju-vn-kf-shake .38s cubic-bezier(.36,.07,.19,.97)}
 @keyframes aju-vn-kf-shake{10%{transform:translate(-9px,4px) rotate(-.6deg)}20%{transform:translate(8px,-5px) rotate(.5deg)} 30%{transform:translate(-7px,-3px)}40%{transform:translate(6px,5px) rotate(.3deg)} 55%{transform:translate(-4px,2px)}70%{transform:translate(3px,-2px)}85%{transform:translate(-1px,1px)}100%{transform:none}}
 .aju-vn .aju-vn-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:5}
@@ -828,26 +829,22 @@
       $('greenLine').setAttribute('opacity', 0); $('dead').setAttribute('opacity', 0);
       $('pieces').textContent = ''; $('logoCracks').textContent = ''; $('whole').style.opacity = 0;
       vid.pause(); vid.currentTime = 0; vid.style.opacity = 1; poster.src = srcStart; poster.style.opacity = 1;
-      poster.style.transition = 'none'; poster.style.transform = '';
+      poster.style.transition = 'none'; poster.style.transform = ''; poster.classList.remove('aju-vn-top');
       logoWrap.style.transition = 'none'; logoWrap.style.transform = '';
       bgmCut('calm'); bgmCut('dark');
       caption('');
     }
-    /* 영상이 실제로 펼친 프레임(t초)에 도달했을 때만 성공으로 본다.
-       재생이 거부되거나 멈추면 영상을 숨기고 포스터로 펼치는 연출을 대신 보여준다. */
-    function waitReady(ms) {
-      return new Promise((res) => {
-        if (vid.readyState >= 3) { res(); return; }
-        const done = () => { vid.removeEventListener('canplaythrough', done); clearTimeout(tm); res(); };
-        const tm = setTimeout(done, ms);
-        vid.addEventListener('canplaythrough', done);
-        try { vid.load(); } catch (e) { /* noop */ }
-      });
+    /* 휴대폰 브라우저는 영상의 마지막 프레임을 믿을 수 없다(재생 거부·멈춤·그리기 누락).
+       그래서 영상은 '펼치는 과정'만 맡고, 갈라지는 순간에는 항상 펼친 정지 이미지를 맨 위에 깐다. */
+    new Image().src = srcEnd;   // 펼친 이미지를 미리 받아둔다
+    function showOpenStill() {
+      poster.style.transition = 'none'; poster.style.transform = '';
+      poster.src = srcEnd; poster.classList.add('aju-vn-top'); poster.style.opacity = 1;
     }
     function posterUnfold() {
       return new Promise((res) => {
         vid.style.opacity = 0;
-        poster.src = srcStart; poster.style.opacity = 1;
+        poster.classList.add('aju-vn-top'); poster.src = srcStart; poster.style.opacity = 1;
         poster.style.transition = 'transform .26s ease-in'; poster.style.transform = 'scaleX(.2)';
         setTimeout(() => {
           poster.src = srcEnd;
@@ -856,29 +853,32 @@
         }, 280);
       });
     }
+    /* 반드시 탭(클릭) 처리 안에서 곧바로 play()를 불러야 아이폰이 재생을 허락한다 */
     function playUntil(t, rate) {
       return new Promise((res) => {
-        let finished = false, guard = null;
+        let finished = false, moved = false, frames = 0;
+        // 화면에 실제로 그려진 프레임 수. 영상이 첫 장면에 멈춰 있으면 실패로 본다.
+        const canCount = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
+        if (canCount) { const tick = () => { frames++; if (!finished) vid.requestVideoFrameCallback(tick); }; vid.requestVideoFrameCallback(tick); }
         const finish = (ok) => {
           if (finished) return; finished = true;
           clearTimeout(guard); vid.pause();
-          if (ok && vid.currentTime >= t - 0.08) { res(); return; }
-          posterUnfold().then(res);
+          if (ok && moved && (!canCount || frames >= 6)) { showOpenStill(); res(); return; }
+          posterUnfold().then(() => { showOpenStill(); res(); });
         };
+        const guard = setTimeout(() => finish(false), t / rate * 1000 + 2500);
         if (vid.error || !vid.canPlayType) { finish(false); return; }
-        waitReady(1500).then(() => {
+        vid.muted = true; vid.style.opacity = 1;
+        try { vid.playbackRate = rate; vid.currentTime = 0; } catch (e) { /* noop */ }
+        let p;
+        try { p = vid.play(); } catch (e) { finish(false); return; }
+        if (p && p.catch) p.catch(() => finish(false));
+        const chk = () => {
           if (finished) return;
-          try { vid.playbackRate = rate; vid.currentTime = 0; } catch (e) { /* noop */ }
-          vid.style.opacity = 1;
-          const p = vid.play(); if (p && p.catch) p.catch(() => finish(false));
-          guard = setTimeout(() => finish(false), t / rate * 1000 + 800);
-          const chk = () => {
-            if (finished) return;
-            if (vid.currentTime > 0.04) poster.style.opacity = 0;   // 실제로 움직이기 시작한 뒤에만 포스터를 걷는다
-            if (vid.currentTime >= t || vid.ended) finish(true); else requestAnimationFrame(chk);
-          };
-          requestAnimationFrame(chk);
-        });
+          if (vid.currentTime > 0.04) moved = true;   // 포스터는 영상 아래에 그대로 둔다
+          if (vid.currentTime >= t || vid.ended) finish(true); else requestAnimationFrame(chk);
+        };
+        requestAnimationFrame(chk);
       });
     }
     function crackHinge() {
