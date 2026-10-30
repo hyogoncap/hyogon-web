@@ -65,6 +65,9 @@ a.btn{text-decoration:none}
 .start__note{display:block;margin-top:12px;font-size:13px;color:var(--sub)}
 .skip{position:absolute;top:16px;right:16px;z-index:11;font-size:13px;font-weight:700;padding:8px 14px;border-radius:999px;background:rgba(0,0,0,.06);opacity:0;transition:opacity .3s}
 .skip.on{opacity:1}
+.mute{position:absolute;top:16px;left:16px;z-index:11;font-size:13px;font-weight:700;padding:8px 14px;border-radius:999px;background:rgba(0,0,0,.06);display:none}
+.mute.on{display:block}
+.intro.dark .mute{background:rgba(255,255,255,.12);color:#fff}
 .intro.dark .skip{background:rgba(255,255,255,.12);color:#fff}
 
 /* logo scene */
@@ -257,6 +260,10 @@ figcaption{font-size:13px;color:#8b8b96;margin-top:8px;line-height:1.5}
   <div class="flash" id="flash"></div>
   <div class="onomato" id="jjeok">쩍!</div>
   <button class="skip" id="skip">건너뛰기 ›</button>
+  <button class="mute" id="mute" aria-label="배경음악 끄기">♪ 음악 끄기</button>
+  <!-- 배경음악: 파일이 없으면 조용히 생략된다 (ComfyUI 생성 가이드: BGM.md) -->
+  <audio id="bgmCalm" src="assets/bgm-calm.mp3" preload="auto"></audio>
+  <audio id="bgmDark" src="assets/bgm-dark.mp3" preload="auto" loop></audio>
 
   <!-- scene 1 : Duo unfolds and cracks -->
   <div class="scene" id="scene1">
@@ -636,7 +643,35 @@ function buzz(){ // 화면이 죽을 때 '지직'
   o.start(t); s.start(t); o.stop(t+.5); s.stop(t+.5);
 }
 
-/* ───────── 균열 경로 생성 ───────── */
+/* ───────── 배경음악 ─────────
+   bgm-calm : 펼치는 장면(밝고 잔잔) → 힌지 균열 순간 뚝 끊김
+   bgm-dark : 로고 장면부터 낮게 깔리는 긴장 루프 → 기사로 스크롤하면 페이드아웃 */
+const bgm = { calm: $('#bgmCalm'), dark: $('#bgmDark'), muted: false, fades: new Map() };
+const BGM_VOL = { calm: .55, dark: .45 };
+function bgmOk(a){ return a && !a.error && a.readyState > 0; }
+function fadeTo(a, vol, ms){
+  if(!bgmOk(a)) return;
+  cancelAnimationFrame(bgm.fades.get(a));
+  const from = a.volume, t0 = performance.now();
+  const step = now => {
+    const k = Math.min(1, (now - t0) / ms);
+    a.volume = Math.max(0, Math.min(1, from + (vol - from) * k));
+    if(k < 1) bgm.fades.set(a, requestAnimationFrame(step));
+    else if(vol === 0) a.pause();
+  };
+  bgm.fades.set(a, requestAnimationFrame(step));
+}
+function bgmPlay(name, ms = 600){
+  const a = bgm[name]; if(!bgmOk(a) || bgm.muted) return;
+  a.volume = 0; a.currentTime = 0;
+  const p = a.play(); if(p && p.catch) p.catch(()=>{});
+  fadeTo(a, BGM_VOL[name], ms);
+  $('#mute').classList.add('on');
+}
+function bgmCut(name){ const a = bgm[name]; if(!bgmOk(a)) return; cancelAnimationFrame(bgm.fades.get(a)); a.pause(); }
+function bgmStopAll(ms = 800){ fadeTo(bgm.calm, 0, ms); fadeTo(bgm.dark, 0, ms); }
+
+
 const NS = 'http://www.w3.org/2000/svg';
 function el(tag, attrs, parent){ const e = document.createElementNS(NS, tag); for(const k in attrs) e.setAttribute(k, attrs[k]); if(parent) parent.appendChild(e); return e; }
 function jag(x1,y1,x2,y2,steps,amp){
@@ -675,6 +710,7 @@ function resetIntro(){
   $('#pieces').innerHTML=''; $('#logoCracks').innerHTML=''; $('#whole').style.opacity=0;
   vid.pause(); vid.currentTime=0; $('#poster').src='assets/duo-closed.jpg'; $('#poster').style.opacity=1;
   $('.logo-wrap').style.transition='none'; $('.logo-wrap').style.transform='';
+  bgmCut('calm'); bgmCut('dark');
   caption('');
 }
 function playUntil(t, rate){
@@ -715,12 +751,13 @@ function glitch(){
 async function runIntro(){
   const id = ++runId; const alive = ()=> id===runId;
   resetIntro(); $('#start').style.display='none'; $('#skip').classList.add('on');
+  bgmPlay('calm', 400);
   caption('329만원. 애플의 첫 폴더블폰을 펼친다.');
   await playUntil(1.17, .8); if(!alive()) return;
   await sleep(500); if(!alive()) return;
   caption('그리고…');
   await sleep(450); if(!alive()) return;
-  crackHinge(); boom($('#stage'), 1);
+  bgmCut('calm'); crackHinge(); boom($('#stage'), 1);
   caption('펼친 지 6시간.<small>호주 이용자 주장 · 20회도 안 되는 개폐 끝에 힌지 부근 화면이 갈라졌다</small>');
   await sleep(900); if(!alive()) return;
   glitch(); $('#greenLine').setAttribute('opacity',1); buzz();
@@ -729,7 +766,7 @@ async function runIntro(){
   caption('화면엔 줄이 생겼고, 터치는 먹통이 됐다.<small>제리릭에브리띵 내구성 테스트(10월 24일)</small>');
   await sleep(1900); if(!alive()) return;
   // → 로고 장면
-  intro.classList.add('dark'); $('#scene1').hidden=true; caption('');
+  intro.classList.add('dark'); $('#scene1').hidden=true; caption(''); bgmPlay('dark', 1500);
   await sleep(500); if(!alive()) return;
   await logoSequence(alive);
 }
@@ -793,9 +830,22 @@ function skipIntro(){
   const {pieces} = buildPieces();
   $('#pieces').style.opacity=1; $('#whole').style.opacity=0;
   for(const k in pieces) pieces[k].style.transform=SPLIT[k];
+  bgmPlay('dark', 1200);
   showTitle();
 }
 $('#play').addEventListener('click',()=>{ audio(); runIntro(); });
+$('#mute').addEventListener('click',()=>{
+  bgm.muted = !bgm.muted;
+  $('#mute').textContent = bgm.muted ? '♪ 음악 켜기' : '♪ 음악 끄기';
+  if(bgm.muted) bgmStopAll(300);
+  else if(intro.classList.contains('dark')) bgmPlay('dark', 800);
+});
+// 기사로 내려가면 음악을 내리고, 인트로로 돌아오면 다시 올린다
+new IntersectionObserver(([e])=>{
+  if(!intro.classList.contains('dark') || bgm.muted) return;
+  if(e.intersectionRatio < .3) fadeTo(bgm.dark, 0, 1200);
+  else if(bgm.dark.paused || bgm.dark.volume < .05){ const p=bgm.dark.play(); if(p&&p.catch) p.catch(()=>{}); fadeTo(bgm.dark, BGM_VOL.dark, 1200); }
+},{threshold:[0,.3,.6]}).observe(intro);
 $('#skip').addEventListener('click',skipIntro);
 $('#replay').addEventListener('click',()=>{ audio(); window.scrollTo({top:0}); runIntro(); });
 
