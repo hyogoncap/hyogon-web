@@ -827,21 +827,58 @@
       $('crackLines').textContent = ''; $('glitchLines').textContent = ''; $('glitchLines').setAttribute('opacity', 0);
       $('greenLine').setAttribute('opacity', 0); $('dead').setAttribute('opacity', 0);
       $('pieces').textContent = ''; $('logoCracks').textContent = ''; $('whole').style.opacity = 0;
-      vid.pause(); vid.currentTime = 0; poster.src = srcStart; poster.style.opacity = 1;
+      vid.pause(); vid.currentTime = 0; vid.style.opacity = 1; poster.src = srcStart; poster.style.opacity = 1;
+      poster.style.transition = 'none'; poster.style.transform = '';
       logoWrap.style.transition = 'none'; logoWrap.style.transform = '';
       bgmCut('calm'); bgmCut('dark');
       caption('');
     }
+    /* 영상이 실제로 펼친 프레임(t초)에 도달했을 때만 성공으로 본다.
+       재생이 거부되거나 멈추면 영상을 숨기고 포스터로 펼치는 연출을 대신 보여준다. */
+    function waitReady(ms) {
+      return new Promise((res) => {
+        if (vid.readyState >= 3) { res(); return; }
+        const done = () => { vid.removeEventListener('canplaythrough', done); clearTimeout(tm); res(); };
+        const tm = setTimeout(done, ms);
+        vid.addEventListener('canplaythrough', done);
+        try { vid.load(); } catch (e) { /* noop */ }
+      });
+    }
+    function posterUnfold() {
+      return new Promise((res) => {
+        vid.style.opacity = 0;
+        poster.src = srcStart; poster.style.opacity = 1;
+        poster.style.transition = 'transform .26s ease-in'; poster.style.transform = 'scaleX(.2)';
+        setTimeout(() => {
+          poster.src = srcEnd;
+          poster.style.transition = 'transform .5s cubic-bezier(.2,.9,.2,1)'; poster.style.transform = 'scaleX(1)';
+          setTimeout(res, 550);
+        }, 280);
+      });
+    }
     function playUntil(t, rate) {
       return new Promise((res) => {
-        const fallback = () => { poster.src = srcEnd; poster.style.opacity = 1; setTimeout(res, 700); };
-        if (vid.error || !vid.canPlayType) { fallback(); return; }
-        vid.playbackRate = rate; vid.currentTime = 0;
-        const p = vid.play(); if (p && p.catch) p.catch(fallback);
-        poster.style.opacity = 0;
-        const guard = setTimeout(() => { vid.pause(); res(); }, 4000 / rate);
-        const chk = () => { if (vid.currentTime >= t || vid.ended) { vid.pause(); clearTimeout(guard); res(); } else requestAnimationFrame(chk); };
-        requestAnimationFrame(chk);
+        let finished = false, guard = null;
+        const finish = (ok) => {
+          if (finished) return; finished = true;
+          clearTimeout(guard); vid.pause();
+          if (ok && vid.currentTime >= t - 0.08) { res(); return; }
+          posterUnfold().then(res);
+        };
+        if (vid.error || !vid.canPlayType) { finish(false); return; }
+        waitReady(1500).then(() => {
+          if (finished) return;
+          try { vid.playbackRate = rate; vid.currentTime = 0; } catch (e) { /* noop */ }
+          vid.style.opacity = 1;
+          const p = vid.play(); if (p && p.catch) p.catch(() => finish(false));
+          guard = setTimeout(() => finish(false), t / rate * 1000 + 800);
+          const chk = () => {
+            if (finished) return;
+            if (vid.currentTime > 0.04) poster.style.opacity = 0;   // 실제로 움직이기 시작한 뒤에만 포스터를 걷는다
+            if (vid.currentTime >= t || vid.ended) finish(true); else requestAnimationFrame(chk);
+          };
+          requestAnimationFrame(chk);
+        });
       });
     }
     function crackHinge() {
