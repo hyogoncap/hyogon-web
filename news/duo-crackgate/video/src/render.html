@@ -12,6 +12,27 @@ const VERT=new URLSearchParams(location.search).has('v');   // ?v → 쇼츠(9:1
 const W=VERT?1080:1920, H=VERT?1920:1080, BPM=128, B=60/BPM;          // B = 한 박(초)
 document.getElementById('c').width=W; document.getElementById('c').height=H;
 const L=(h,v)=>VERT?v:h;   // 가로/세로 배치값
+/* ?en → 영문판: 화면 문구를 아래 표로 바꾼다 (가격은 한국 출고가 기준, 원화 표기) */
+const EN=new URLSearchParams(location.search).has('en');
+const TR={
+ '애플의':"Apple's", '첫':'first', '폴더블':'foldable', '폰':'phone', '아이폰 듀오':'iPhone Duo',
+ '한 손에':'One hand', '펼치면':'Open it', '접으면':'Fold it', '무광':'Matte', '디스플레이':'display', '방진·방수':'Dust & water',
+ '그런데':'But', '가격은?':'The price?', '아이폰 듀오 256GB 국내 출고가':(VERT?'iPhone Duo 256GB\nprice in Korea':'iPhone Duo 256GB · price in Korea'),
+ '펼치는 데 1초':'1 second to open', '폴드8보다':'vs. Galaxy Fold8', '+101만원':'+₩1.01M', '227만8100원 vs 329만원':'₩2.28M vs. ₩3.29M',
+ '무게':'Weight', '수리비는?':'Repair?', '164만9000원':'₩1,649,000', '보증 외 내부 화면 수리비':'Inner screen, out of warranty',
+ '폴드8의':'vs. Fold8', '약 2배':'~2×', '펼치고':'Unfold', '접고':'Fold', '애플의 첫 폴더블':"Apple's first foldable",
+ '출시 첫날':'Launch day', '10.23':'Oct 23', '제보가':'Reports', '쏟아졌다':'poured in',
+ '접는 부분이':'Along', '따라':'the fold', '갈라졌다?':'CRACKED?', '몇 번이나':'How many', '버틸까?':'folds?',
+ '접은 횟수':'FOLDS', '잇섭 · 100회 이상 없음':'ITSub · 100 folds, no issue', '쿠바 클라비터 · 7만5001회째 줄':'Kuba Klawiter · line at fold 75,001',
+ 'CNET · 12만5000회+ 진행 중':'CNET · 125,000+ and counting', '모두 개별 기기 대상 비공식 테스트':'Unofficial tests, one unit each',
+ '애플의 답은':"Apple's answer", '“소수의 기기”':'“A small number”', '원인·규모는 공개하지 않았다':'No cause. No numbers.',
+ '쩍!':'CRACK!', '출시 일주일,':'One week after launch,', '접히는 부분을 따라 화면이 갈라졌다':'screens split along the fold',
+ '출시 일주일, 접히는 부분을 따라 화면이 갈라졌다':'One week after launch, screens split along the fold',
+ '애플이 내놓은 설명은 단 하나.':"Apple's only explanation:", '“소수의 기기에서 문제를 인지하고 있다”':(VERT?'“aware of an issue affecting\na small number of units”':'“aware of an issue affecting a small number of units”'),
+ '인터랙티브 뉴스 · 아이폰 듀오 ‘크랙게이트’':'iPhone Duo “Crackgate”', '329만원짜리':'The ₩3.29M', '‘쩍’':'CRACK',
+ '329만원짜리 ':'The ₩3.29M ', '애플의 대답은 “소수의 기기”였다':(VERT?'Apple called it\n“a small number of units.”':'Apple called it “a small number of units.”')
+};
+const tr=s=>(EN && TR[s]!==undefined)?TR[s]:s;
 const TOTAL_BEATS=50;
 const BG='#f4f4f6', INK='#111114', RED='#e0281b', WHITE='#ffffff';
 const ctx=document.getElementById('c').getContext('2d');
@@ -25,14 +46,17 @@ const ease={ out:t=>1-Math.pow(1-t,3), inOut:t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3
 
 /* ───────── 그리기 도구 ───────── */
 function fill(c){ ctx.fillStyle=c; ctx.fillRect(0,0,W,H); }
-function text(str,{x=W/2,y=H/2,size=300,color=INK,weight=900,align='center',alpha=1,scale=1,rot=0,track=-0.045,stroke=null,sw=0}={}){
+function text(str0,{x=W/2,y=H/2,size=300,color=INK,weight=900,align='center',alpha=1,scale=1,rot=0,track=-0.045,stroke=null,sw=0}={}){
+  const str=tr(str0);
   ctx.save(); ctx.globalAlpha=alpha; ctx.translate(x,y); ctx.rotate(rot); ctx.scale(scale,scale);
   ctx.font=`${weight} ${size}px P`; ctx.letterSpacing=(size*track)+'px';
-  const maxW=W*0.9/Math.max(1,scale); const mw=ctx.measureText(str).width;            // 화면 폭에 맞게 줄임
+  const lines=str.split('\n');                                                          // '\n'이 있으면 여러 줄
+  const maxW=W*0.9/Math.max(1,scale); const mw=Math.max(...lines.map(l=>ctx.measureText(l).width));   // 화면 폭에 맞게 줄임
   if(mw>maxW){ size=size*maxW/mw; ctx.font=`${weight} ${size}px P`; ctx.letterSpacing=(size*track)+'px'; }
   ctx.textAlign=align; ctx.textBaseline='middle';
-  if(stroke){ ctx.lineJoin='round'; ctx.lineWidth=sw; ctx.strokeStyle=stroke; ctx.strokeText(str,0,size*0.04); }
-  ctx.fillStyle=color; ctx.fillText(str,0,size*0.04);
+  lines.forEach((l,i)=>{ const ly=size*0.04+(i-(lines.length-1)/2)*size*1.18;
+    if(stroke){ ctx.lineJoin='round'; ctx.lineWidth=sw; ctx.strokeStyle=stroke; ctx.strokeText(l,0,ly); }
+    ctx.fillStyle=color; ctx.fillText(l,0,ly); });
   ctx.restore();
 }
 /* 단어 카드: 박자에 맞춰 커졌다 자리 잡는 타이포 */
@@ -66,7 +90,7 @@ function wipe(p,color=RED){
   for(let i=0;i<6;i++){ const d=clamp(p*1.6-i*0.08); const y=i*H/6; ctx.fillRect(-W+d*2*W,y,W,H/6+1); }
   ctx.restore();
 }
-function chip(str,x,y,{bg=INK,color=WHITE,size=46,alpha=1}={}){
+function chip(str0,x,y,{bg=INK,color=WHITE,size=46,alpha=1}={}){ const str=tr(str0);
   ctx.save(); ctx.globalAlpha=alpha; ctx.font=`700 ${size}px P`; ctx.letterSpacing='-1px';
   const w=ctx.measureText(str).width+size*0.9, h=size*1.6;
   ctx.fillStyle=bg; ctx.beginPath(); ctx.roundRect(x,y-h/2,w,h,h/2); ctx.fill();
@@ -148,16 +172,16 @@ function logoScene(lt,crack1,crack2,title){
   if(lt>crack2 && lt<title){ polyPartial(LG.h,clamp((lt-crack2)/0.1)); ctx.stroke(); }
   ctx.restore();
   for(const c of [crack1,crack2]){ const d=lt-c; if(d>0&&d<0.3){ ctx.fillStyle=`rgba(255,255,255,${0.6*(1-d/0.3)})`; ctx.fillRect(0,0,W,H); }
-    if(d>0&&d<0.9){ const s=d<0.14?0.4+0.7*ease.back(d/0.14):1; text('쩍!',{size:260,color:RED,stroke:WHITE,sw:14,scale:s,rot:-0.14,alpha:d>0.65?1-(d-0.65)/0.25:1,x:L(W/2+330,W/2+240),y:L(H/2-200,H*0.42-360)}); } }
+    if(d>0&&d<0.9){ const s=d<0.14?0.4+0.7*ease.back(d/0.14):1; text('쩍!',{size:260,color:RED,stroke:WHITE,sw:14,scale:s,rot:-0.14,alpha:d>0.65?1-(d-0.65)/0.25:1,x:L(W/2+330,EN?W/2:W/2+240),y:L(H/2-200,H*0.42-(EN?420:360))}); } }
   if(lt<title && lt>0.2){ const a=clamp((lt-0.2)/0.3)*(lt>title-0.3?(title-lt)/0.3:1);
     text(lt<crack1?'애플이 내놓은 설명은 단 하나.':'“소수의 기기에서 문제를 인지하고 있다”',{y:L(H-110,1380),size:L(52,58),weight:700,color:WHITE,alpha:a,track:-0.02}); }
   if(lt>title){ const a=ease.out(clamp((lt-title-0.15)/0.6));
     text('인터랙티브 뉴스 · 아이폰 듀오 ‘크랙게이트’',{y:L(650,1080),size:L(40,44),weight:700,color:'#ff6b5e',alpha:a,track:0});
     if(VERT){ text('329만원짜리',{y:1230,size:170,color:WHITE,alpha:a}); text('‘쩍’',{y:1420,size:230,color:RED,alpha:a}); }
     else { ctx.save(); ctx.globalAlpha=a; ctx.font='900 150px P'; ctx.letterSpacing='-8px'; ctx.textBaseline='middle';
-    const t1='329만원짜리 ', t2='‘쩍’'; const w1=ctx.measureText(t1).width, w2=ctx.measureText(t2).width, x0=W/2-(w1+w2)/2;
+    const t1=tr('329만원짜리 '), t2=tr('‘쩍’'); const w1=ctx.measureText(t1).width, w2=ctx.measureText(t2).width, x0=W/2-(w1+w2)/2;
     ctx.fillStyle=WHITE; ctx.fillText(t1,x0,780); ctx.fillStyle=RED; ctx.fillText(t2,x0+w1,780); ctx.restore(); }
-    text('애플의 대답은 “소수의 기기”였다',{y:L(900,1580),size:L(52,60),weight:700,color:'#c9c9d2',alpha:ease.out(clamp((lt-title-0.45)/0.6)),track:-0.02}); }
+    text('애플의 대답은 “소수의 기기”였다',{y:L(900,EN?1650:1580),size:L(52,60),weight:700,color:'#c9c9d2',alpha:ease.out(clamp((lt-title-0.45)/0.6)),track:-0.02}); }
 }
 
 /* ───────── 장면 표 (박 단위) ───────── */
@@ -179,7 +203,7 @@ W8(7,'IP68',{bg:RED,color:WHITE,size:380}); W8(7.5,'방진·방수',{bg:INK,colo
 // 2) 가격·스펙 펀치
 W8(8,'그런데',{bg:INK,color:WHITE}); W8(8.5,'가격은?',{bg:WHITE});
 at(9,10,(lt,lb)=>{ fill(RED); const v=Math.round(329*ease.out(clamp(lb/0.55)));
-  const s=lb>0.55&&lb<0.7?1.08:1; text(v+'만원',{size:330,color:WHITE,scale:s}); text('아이폰 듀오 256GB 국내 출고가',{y:H/2+220,size:46,weight:700,color:WHITE,alpha:clamp(lb/0.3)}); });
+  const s=lb>0.55&&lb<0.7?1.08:1; text(EN?'₩'+(v/100).toFixed(2)+'M':v+'만원',{size:330,color:WHITE,scale:s}); text('아이폰 듀오 256GB 국내 출고가',{y:H/2+220,size:46,weight:700,color:WHITE,alpha:clamp(lb/0.3)}); });
 at(10,11,(lt,lb)=>{ fill(BG); const p=ease.inOut(clamp(lb/0.85)); phone(p>=1?OPEN:foldIdx(1-p),{scale:1+0.05*(1-p)}); chip('펼치는 데 1초',L(90,70),L(120,300),{size:L(46,60)}); });
 W8(11,'폴드8보다',{bg:WHITE});
 at(11.5,12.5,(lt,lb)=>{ card(lb,1,'+101만원',{bg:WHITE,color:RED,size:340,sub:'227만8100원 vs 329만원',subColor:INK}); });
@@ -209,7 +233,7 @@ at(27,30,(lt,lb)=>{ fill(BG);
   [[0.5,'잇섭 · 100회 이상 없음',INK],[1.2,'쿠바 클라비터 · 7만5001회째 줄',RED],[1.9,'CNET · 12만5000회+ 진행 중',INK]].forEach(([b,s,c],i)=>{ if(lb>b) chip(s,L(120,70),L(520+i*120,500+i*105),{bg:c,alpha:clamp((lb-b)/0.15),size:L(46,44)}); });
   text('모두 개별 기기 대상 비공식 테스트',{x:L(126,76),y:L(H-60,820),size:34,weight:700,align:'left',color:'#8b8b96',track:0}); });
 W8(30,'애플의 답은',{bg:INK,color:WHITE,size:260});
-at(30.5,32,(lt,lb)=>{ fill(WHITE); const s='“소수의 기기”'; const n=Math.min(s.length,Math.floor(lb/0.09)+1);
+at(30.5,32,(lt,lb)=>{ fill(WHITE); const s=tr('“소수의 기기”'); const n=Math.min(s.length,Math.floor(lb/Math.min(0.09,0.6/s.length))+1);
   text(s.slice(0,n),{size:240}); if(lb>0.8) text('원인·규모는 공개하지 않았다',{y:H/2+190,size:52,weight:700,color:RED,alpha:clamp((lb-0.8)/0.2),track:-0.02}); });
 
 // 4) 카운트다운 5·4·3·2·1 → 펼치는 순간
