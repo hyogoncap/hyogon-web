@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:P;src:url(Pretendard-Black.otf);font-weight:900}
+@font-face{font-family:P;src:url(Pretendard-Bold.otf);font-weight:700}
+html,body{margin:0;background:#000}canvas{display:block}
+</style></head>
+<body><canvas id="c"></canvas>
+<script>
+/* ───────── 기본 설정 (오디오 스크립트와 같은 박자표) ───────── */
+const VERT=new URLSearchParams(location.search).has('v');   // ?v → 쇼츠(9:16)
+const W=VERT?1080:1920, H=VERT?1920:1080, BPM=128, B=60/BPM;          // B = 한 박(초)
+document.getElementById('c').width=W; document.getElementById('c').height=H;
+const L=(h,v)=>VERT?v:h;   // 가로/세로 배치값
+const TOTAL_BEATS=50;
+const BG='#f4f4f6', INK='#111114', RED='#e0281b', WHITE='#ffffff';
+const ctx=document.getElementById('c').getContext('2d');
+const N_FR=73, OPEN=6, OPEN_END=23, CLOSED_SIDE=54, BACK0=55, BACK1=72, CLOSED_FRONT=0;
+const fr=[];
+
+/* 결정적 난수(매 프레임 같은 균열이 나오도록) */
+function rng(seed){ let s=seed>>>0; return ()=>{ s=(s*1664525+1013904223)>>>0; return s/4294967296; }; }
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const ease={ out:t=>1-Math.pow(1-t,3), inOut:t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2, back:t=>{const c=1.9;return 1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2);} };
+
+/* ───────── 그리기 도구 ───────── */
+function fill(c){ ctx.fillStyle=c; ctx.fillRect(0,0,W,H); }
+function text(str,{x=W/2,y=H/2,size=300,color=INK,weight=900,align='center',alpha=1,scale=1,rot=0,track=-0.045,stroke=null,sw=0}={}){
+  ctx.save(); ctx.globalAlpha=alpha; ctx.translate(x,y); ctx.rotate(rot); ctx.scale(scale,scale);
+  ctx.font=`${weight} ${size}px P`; ctx.letterSpacing=(size*track)+'px';
+  const maxW=W*0.9/Math.max(1,scale); const mw=ctx.measureText(str).width;            // 화면 폭에 맞게 줄임
+  if(mw>maxW){ size=size*maxW/mw; ctx.font=`${weight} ${size}px P`; ctx.letterSpacing=(size*track)+'px'; }
+  ctx.textAlign=align; ctx.textBaseline='middle';
+  if(stroke){ ctx.lineJoin='round'; ctx.lineWidth=sw; ctx.strokeStyle=stroke; ctx.strokeText(str,0,size*0.04); }
+  ctx.fillStyle=color; ctx.fillText(str,0,size*0.04);
+  ctx.restore();
+}
+/* 단어 카드: 박자에 맞춰 커졌다 자리 잡는 타이포 */
+function card(lb,len,str,{bg=BG,color=INK,size=320,sub=null,subColor=null}={}){
+  fill(bg);
+  const k=clamp(lb/(len*0.35)); const s=1.22-0.22*ease.out(k);
+  // 진입할 때 짧게 남는 잔상(속도감)
+  if(k<1){ text(str,{size,color,scale:s*1.06,alpha:0.18*(1-k)}); }
+  text(str,{size,color,scale:s});
+  if(sub) text(sub,{y:H/2+size*0.62,size:size*L(0.22,0.3),color:subColor||color,weight:700,track:-0.02,alpha:clamp(lb/(len*0.4))});
+}
+/* 휴대폰 영상 프레임 */
+function phone(i,{dx=0,dy=0,scale=1,alpha=1,blur=0}={}){
+  const img=fr[Math.round(clamp(i,0,N_FR-1))]; const s0=L(H*1.02/668, W*1.08/600)*scale; if(VERT) dx=0;
+  const w=600*s0, h=668*s0;
+  ctx.save(); ctx.globalAlpha=alpha;
+  if(blur){ for(let k=-3;k<=3;k++){ ctx.globalAlpha=alpha/7; ctx.drawImage(img,W/2-w/2+dx+k*blur,H-h+40*scale+dy,w,h);} }
+  else ctx.drawImage(img,W/2-w/2+dx,H-h+40*scale+dy,w,h);
+  ctx.restore();
+  return {s0,w,h,x0:W/2-w/2+dx,y0:H-h+40*scale+dy};
+}
+function phoneScene(i,lb,len,opt={}){
+  fill(BG); const punch=1+0.07*(1-ease.out(clamp(lb/(len*0.5))));
+  return phone(i,{...opt,scale:(opt.scale||1)*punch});
+}
+/* 접기/펼치기 애니메이션: OPEN_END(펼침) ↔ CLOSED_SIDE(접힘) */
+const foldIdx=p=>OPEN_END+(CLOSED_SIDE-OPEN_END)*p;
+/* 가로 줄무늬 와이프(장면 전환 모션) */
+function wipe(p,color=RED){
+  ctx.save(); ctx.fillStyle=color;
+  for(let i=0;i<6;i++){ const d=clamp(p*1.6-i*0.08); const y=i*H/6; ctx.fillRect(-W+d*2*W,y,W,H/6+1); }
+  ctx.restore();
+}
+function chip(str,x,y,{bg=INK,color=WHITE,size=46,alpha=1}={}){
+  ctx.save(); ctx.globalAlpha=alpha; ctx.font=`700 ${size}px P`; ctx.letterSpacing='-1px';
+  const w=ctx.measureText(str).width+size*0.9, h=size*1.6;
+  ctx.fillStyle=bg; ctx.beginPath(); ctx.roundRect(x,y-h/2,w,h,h/2); ctx.fill();
+  ctx.fillStyle=color; ctx.textBaseline='middle'; ctx.fillText(str,x+size*0.45,y+size*0.05); ctx.restore();
+}
+
+/* ───────── 균열 ───────── */
+function jag(r,x1,y1,x2,y2,steps,amp){ const pts=[[x1,y1]];
+  for(let i=1;i<steps;i++){ const p=i/steps, nx=-(y2-y1), ny=x2-x1, L=Math.hypot(nx,ny)||1, j=(r()*2-1)*amp;
+    pts.push([x1+(x2-x1)*p+nx/L*j, y1+(y2-y1)*p+ny/L*j]); }
+  pts.push([x2,y2]); return pts; }
+function polyPartial(pts,p){ // 경로를 p(0~1)만큼만
+  const seg=[]; let L=0; for(let i=1;i<pts.length;i++){ const l=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]); seg.push(l); L+=l; }
+  let need=L*p; ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<pts.length&&need>0;i++){ const l=seg[i-1]; if(need>=l){ ctx.lineTo(pts[i][0],pts[i][1]); need-=l; }
+    else { const k=need/l; ctx.lineTo(pts[i-1][0]+(pts[i][0]-pts[i-1][0])*k, pts[i-1][1]+(pts[i][1]-pts[i-1][1])*k); need=0; } }
+}
+const CR=(()=>{ const r=rng(7); const main=jag(r,298,122,301,490,26,6); const br=[];
+  for(let i=0;i<10;i++){ const p=main[2+Math.floor(r()*(main.length-4))], dir=r()<.5?-1:1, len=40+r()*110, a=r()*.9-.45;
+    br.push({pts:jag(r,p[0],p[1],p[0]+dir*len*Math.cos(a),p[1]+len*Math.sin(a),6,5),w:1.4+r()*1.4,d:0.05+i*0.03}); }
+  return {main,br}; })();
+function crackScene(lt){ // lt: 균열 시작 후 초
+  fill(BG);
+  // 흔들림
+  const sh=lt<0.45?(1-lt/0.45):0, r=rng(Math.floor(lt*60)+3);
+  const g=phone(OPEN,{dx:(r()*2-1)*28*sh,dy:(r()*2-1)*18*sh});
+  ctx.save(); ctx.translate(g.x0,g.y0); ctx.scale(g.s0,g.s0);
+  ctx.beginPath(); ctx.roundRect(40,122,516,368,20); ctx.clip();
+  // 화면이 죽는 단계
+  if(lt>1.6){ ctx.fillStyle=`rgba(5,5,7,${clamp((lt-1.6)/0.08)*0.94})`; ctx.fillRect(300,122,256,368); }
+  if(lt>0.85){ ctx.fillStyle='rgba(255,255,255,.92)';
+    [214,238,252,296,398,436,468].forEach((y,i)=>{ if(lt>0.85+i*0.03) ctx.fillRect(300,y,256,i%3?2.5:5); });
+    ctx.fillStyle='rgba(255,255,255,.55)'; [190,330].forEach(y=>ctx.fillRect(40,y,258,1.5));
+    ctx.fillStyle=lt>1.6?'rgba(54,255,106,.3)':'#36ff6a'; ctx.shadowColor='#36ff6a'; ctx.shadowBlur=8; ctx.fillRect(303,122,3,368); ctx.shadowBlur=0; }
+  ctx.lineJoin='bevel'; ctx.shadowColor='rgba(255,255,255,.9)'; ctx.shadowBlur=4;
+  const pm=clamp(lt/0.14);
+  ctx.strokeStyle='#fff'; ctx.lineWidth=3.4; polyPartial(CR.main,pm); ctx.stroke();
+  ctx.strokeStyle='rgba(20,20,20,.8)'; ctx.lineWidth=1; polyPartial(CR.main,pm); ctx.stroke();
+  CR.br.forEach(b=>{ const p=clamp((lt-b.d)/0.22); if(p<=0) return; ctx.strokeStyle='#fff'; ctx.lineWidth=b.w; polyPartial(b.pts,p); ctx.stroke(); });
+  ctx.restore();
+  // 플래시
+  if(lt<0.35){ ctx.fillStyle=`rgba(255,255,255,${0.95*(1-lt/0.35)})`; ctx.fillRect(0,0,W,H); }
+  // 쩍!
+  if(lt<1.3){ const k=clamp(lt/0.16); const s=lt<0.16?0.4+0.75*ease.back(k):1.0; const a=lt>1.0?1-(lt-1.0)/0.3:1;
+    text('쩍!',{size:L(330,400),color:RED,stroke:WHITE,sw:20,scale:s,rot:-0.14,alpha:a,x:L(360,W/2),y:L(300,430)}); }
+  if(lt>0.95){ const a=clamp((lt-0.95)/0.2);
+    if(VERT){ text('출시 일주일,',{y:720,size:62,weight:700,color:INK,alpha:a,track:-0.02}); text('접히는 부분을 따라 화면이 갈라졌다',{y:810,size:62,weight:700,color:INK,alpha:a,track:-0.02}); }
+    else text('출시 일주일, 접히는 부분을 따라 화면이 갈라졌다',{y:H-70,size:46,weight:700,color:INK,alpha:a,track:-0.02}); }
+}
+
+/* ───────── 애플 로고 분할 ───────── */
+const APPLE=new Path2D('M100 74 C88 64 66 58 46 66 C20 77 10 108 14 140 C18 176 40 214 66 224 C80 229 90 220 102 220 C114 220 122 229 136 224 C156 216 172 190 180 166 C158 158 144 140 144 116 C144 96 156 82 170 76 C158 60 136 56 120 62 C112 65 106 70 100 74 Z M104 54 C104 34 118 16 140 10 C142 32 128 50 104 54 Z');
+const LG=(()=>{ const r=rng(11), JY=140; const v1=jag(r,100,-4,98,JY,9,4), v2=jag(r,98,JY,101,246,9,4), h=jag(r,98,JY,206,JY+6,10,4);
+  const V=v1.concat(v2.slice(1));
+  return {V,h,polys:{L:[[-10,-10]].concat(V,[[-10,250]]), RT:[[210,-10]].concat(v1,h.slice(1),[[210,JY+6]]), RB:h.concat([[210,250]],v2.slice().reverse().slice(0,-1))}}; })();
+function logoScene(lt,crack1,crack2,title){
+  fill('#0b0b0d');
+  const up=lt>title?ease.out(clamp((lt-title)/0.8)):0;
+  const sc=L(2.2,2.6)*(1-0.3*up), cx=W/2, cy=L(H/2-20-up*170, H*0.42-up*260);
+  const fade=clamp(lt/0.4);
+  // 조각 위치
+  const mv=(k)=>{ const a=clamp((lt-crack1)/0.5), b=clamp((lt-crack2)/0.5);
+    if(k==='L') return [-9*ease.out(a),4*ease.out(a),-0.045*ease.out(a)];
+    const base=[7*ease.out(a),0,0];
+    if(k==='RT') return [base[0]+8*ease.out(b),-11*ease.out(b),0.05*ease.out(b)];
+    return [base[0]+9*ease.out(b),11*ease.out(b),0.025*ease.out(b)]; };
+  ctx.save(); ctx.translate(cx-100*sc,cy-120*sc); ctx.scale(sc,sc); ctx.globalAlpha=fade;
+  const sh=(lt>crack1&&lt<crack1+0.3)?(1-(lt-crack1)/0.3):(lt>crack2&&lt<crack2+0.3)?(1-(lt-crack2)/0.3):0;
+  const r=rng(Math.floor(lt*60)); ctx.translate((r()*2-1)*5*sh,(r()*2-1)*4*sh);
+  if(lt<crack1){ ctx.fillStyle='#f2f2f5'; ctx.fill(APPLE); }
+  else for(const k of ['L','RT','RB']){
+    if(k!=='L' && lt<crack2 && false) continue;
+    const [dx,dy,rot]=mv(k); ctx.save(); ctx.translate(100+dx,120+dy); ctx.rotate(rot); ctx.translate(-100,-120);
+    ctx.beginPath(); const P=LG.polys[k]; ctx.moveTo(P[0][0],P[0][1]); P.forEach(p=>ctx.lineTo(p[0],p[1])); ctx.closePath(); ctx.clip();
+    ctx.fillStyle='#f2f2f5'; ctx.fill(APPLE); ctx.restore(); }
+  // 붉은 균열선
+  ctx.lineWidth=2.6; ctx.strokeStyle='#ff3b2f'; ctx.shadowColor='#ff3b2f'; ctx.shadowBlur=6;
+  if(lt>crack1 && lt<title){ polyPartial(LG.V,clamp((lt-crack1)/0.12)); ctx.stroke(); }
+  if(lt>crack2 && lt<title){ polyPartial(LG.h,clamp((lt-crack2)/0.1)); ctx.stroke(); }
+  ctx.restore();
+  for(const c of [crack1,crack2]){ const d=lt-c; if(d>0&&d<0.3){ ctx.fillStyle=`rgba(255,255,255,${0.6*(1-d/0.3)})`; ctx.fillRect(0,0,W,H); }
+    if(d>0&&d<0.9){ const s=d<0.14?0.4+0.7*ease.back(d/0.14):1; text('쩍!',{size:260,color:RED,stroke:WHITE,sw:14,scale:s,rot:-0.14,alpha:d>0.65?1-(d-0.65)/0.25:1,x:L(W/2+330,W/2+240),y:L(H/2-200,H*0.42-360)}); } }
+  if(lt<title && lt>0.2){ const a=clamp((lt-0.2)/0.3)*(lt>title-0.3?(title-lt)/0.3:1);
+    text(lt<crack1?'애플이 내놓은 설명은 단 하나.':'“소수의 기기에서 문제를 인지하고 있다”',{y:L(H-110,1380),size:L(52,58),weight:700,color:WHITE,alpha:a,track:-0.02}); }
+  if(lt>title){ const a=ease.out(clamp((lt-title-0.15)/0.6));
+    text('인터랙티브 뉴스 · 아이폰 듀오 ‘크랙게이트’',{y:L(650,1080),size:L(40,44),weight:700,color:'#ff6b5e',alpha:a,track:0});
+    if(VERT){ text('329만원짜리',{y:1230,size:170,color:WHITE,alpha:a}); text('‘쩍’',{y:1420,size:230,color:RED,alpha:a}); }
+    else { ctx.save(); ctx.globalAlpha=a; ctx.font='900 150px P'; ctx.letterSpacing='-8px'; ctx.textBaseline='middle';
+    const t1='329만원짜리 ', t2='‘쩍’'; const w1=ctx.measureText(t1).width, w2=ctx.measureText(t2).width, x0=W/2-(w1+w2)/2;
+    ctx.fillStyle=WHITE; ctx.fillText(t1,x0,780); ctx.fillStyle=RED; ctx.fillText(t2,x0+w1,780); ctx.restore(); }
+    text('애플의 대답은 “소수의 기기”였다',{y:L(900,1580),size:L(52,60),weight:700,color:'#c9c9d2',alpha:ease.out(clamp((lt-title-0.45)/0.6)),track:-0.02}); }
+}
+
+/* ───────── 장면 표 (박 단위) ───────── */
+const S=[]; const at=(b0,b1,f)=>S.push({b0,b1,f});
+const W8=(b,str,o={})=>at(b,b+0.5,(lt,lb)=>card(lb,0.5,str,o));
+const PH=(b,len,i,o={})=>at(b,b+len,(lt,lb)=>{ phoneScene(i,lb,len,o); if(o.label) chip(o.label,L(90,70),L(120,260),{bg:o.lbg||INK}); if(o.big) text(o.big,{x:L(o.bx||W/2,W/2),y:L(o.by||170,430),size:L(o.bs||150,(o.bs||150)*1.3),color:o.bc||INK}); });
+
+// 1) 인트로 타이포 (8분음표)
+W8(0,'애플의',{bg:WHITE}); W8(0.5,'첫',{bg:INK,color:WHITE,size:420}); W8(1,'폴더블',{bg:WHITE}); W8(1.5,'폰',{bg:RED,color:WHITE,size:440});
+at(2,3,(lt,lb)=>{ fill(WHITE); const k=ease.out(clamp(lb/0.4));
+  text('아이폰 듀오',{size:250,scale:1.15-0.15*k});
+  const uw=L(1120,880); ctx.fillStyle=RED; ctx.fillRect(W/2-uw/2,H/2+L(150,120),uw*ease.inOut(clamp((lb-0.15)/0.5)),18); });
+PH(3,0.5,CLOSED_FRONT); PH(3.5,0.5,OPEN);
+W8(4,'펼치면',{bg:INK,color:WHITE}); PH(4.5,0.5,OPEN,{big:'7.6″',bx:330,by:250,bs:170});
+W8(5,'접으면',{bg:INK,color:WHITE}); PH(5.5,0.5,CLOSED_FRONT,{big:'한 손에',bx:380,by:250,bs:130});
+W8(6,'무광',{bg:WHITE}); W8(6.5,'디스플레이',{bg:WHITE,size:250});
+W8(7,'IP68',{bg:RED,color:WHITE,size:380}); W8(7.5,'방진·방수',{bg:INK,color:WHITE,size:260});
+
+// 2) 가격·스펙 펀치
+W8(8,'그런데',{bg:INK,color:WHITE}); W8(8.5,'가격은?',{bg:WHITE});
+at(9,10,(lt,lb)=>{ fill(RED); const v=Math.round(329*ease.out(clamp(lb/0.55)));
+  const s=lb>0.55&&lb<0.7?1.08:1; text(v+'만원',{size:330,color:WHITE,scale:s}); text('아이폰 듀오 256GB 국내 출고가',{y:H/2+220,size:46,weight:700,color:WHITE,alpha:clamp(lb/0.3)}); });
+at(10,11,(lt,lb)=>{ fill(BG); const p=ease.inOut(clamp(lb/0.85)); phone(p>=1?OPEN:foldIdx(1-p),{scale:1+0.05*(1-p)}); chip('펼치는 데 1초',L(90,70),L(120,300),{size:L(46,60)}); });
+W8(11,'폴드8보다',{bg:WHITE});
+at(11.5,12.5,(lt,lb)=>{ card(lb,1,'+101만원',{bg:WHITE,color:RED,size:340,sub:'227만8100원 vs 329만원',subColor:INK}); });
+W8(12.5,'무게',{bg:INK,color:WHITE}); W8(13,'254g',{bg:WHITE,size:400}); W8(13.5,'+53g',{bg:RED,color:WHITE,size:400});
+at(14,15,(lt,lb)=>{ fill(BG); const p=ease.inOut(clamp(lb/0.9)); phone(foldIdx(p),{dx:330}); text('수리비는?',{x:L(560,W/2),y:L(H/2,420),size:L(170,210),align:'center',scale:1.1-0.1*ease.out(clamp(lb/0.3))}); });
+at(15,16,(lt,lb)=>card(lb,1,'164만9000원',{bg:WHITE,color:RED,size:250,sub:'보증 외 내부 화면 수리비',subColor:INK}));
+W8(16,'폴드8의',{bg:INK,color:WHITE}); W8(16.5,'약 2배',{bg:RED,color:WHITE,size:400});
+at(17,19,(lt,lb)=>{ fill(BG); const cw=W/2, ch=H/2;
+  for(let i=0;i<4;i++){ const st=Math.floor(lb*2+i)%2; const img=fr[st?OPEN:CLOSED_FRONT]; const s=Math.min(ch*1.02/668, cw*1.05/600); const w=600*s, h=668*s;
+    const cx=(i%2)*cw, cy=Math.floor(i/2)*ch; ctx.save(); ctx.beginPath(); ctx.rect(cx,cy,cw,ch); ctx.clip();
+    ctx.drawImage(img,cx+cw/2-w/2,cy+ch-h+20,w,h); ctx.restore(); }
+  ctx.fillStyle=INK; ctx.fillRect(W/2-3,0,6,H); ctx.fillRect(0,H/2-3,W,6);
+  text(Math.floor(lb*2)%2?'접고':'펼치고',{size:200,color:WHITE,stroke:INK,sw:26}); });
+at(19,21,(lt,lb)=>{ const st=Math.floor(lb*2)%2; phoneScene(st?CLOSED_FRONT:OPEN,lb%0.5,0.5); text(st?'접고':'펼치고',{x:L(120,W/2),y:L(170,420),size:L(170,260),align:L('left','center')}); });
+at(21,22,(lt,lb)=>{ fill(BG); phone(BACK0+(BACK1-BACK0)*ease.inOut(clamp(lb)),{}); text('애플의 첫 폴더블',{x:L(120,W/2),y:L(170,420),size:L(120,130),align:L('left','center')}); });
+W8(22,'출시 첫날',{bg:WHITE}); W8(22.5,'10.23',{bg:INK,color:WHITE,size:400}); W8(23,'제보가',{bg:WHITE}); W8(23.5,'쏟아졌다',{bg:RED,color:WHITE});
+
+// 3) 균열 의혹 + 접기 카운터
+W8(24,'접는 부분이',{bg:WHITE,size:260}); W8(24.5,'따라',{bg:WHITE});
+at(25,26,(lt,lb)=>{ fill(RED); const j=Math.floor(lb*12)%2?8:-8;
+  text('갈라졌다?',{size:330,color:'#000',alpha:.35,x:W/2+j}); text('갈라졌다?',{size:330,color:WHITE,x:W/2-j/2}); });
+W8(26,'몇 번이나',{bg:INK,color:WHITE}); W8(26.5,'버틸까?',{bg:WHITE});
+at(27,30,(lt,lb)=>{ fill(BG);
+  const ph=(lb*2)%2, p=ph<1?ease.inOut(ph):1-ease.inOut(ph-1); phone(foldIdx(p),{dx:380, dy:L(0,90)});
+  const n=Math.round(125000*Math.pow(clamp(lb/2.8),2.2));
+  text(n.toLocaleString('ko-KR'),{x:L(120,70),y:330,size:L(190,230),align:'left'}); text('접은 횟수',{x:L(126,76),y:L(200,190),size:56,weight:700,align:'left',color:'#6b6b76',track:0});
+  [[0.5,'잇섭 · 100회 이상 없음',INK],[1.2,'쿠바 클라비터 · 7만5001회째 줄',RED],[1.9,'CNET · 12만5000회+ 진행 중',INK]].forEach(([b,s,c],i)=>{ if(lb>b) chip(s,L(120,70),L(520+i*120,500+i*105),{bg:c,alpha:clamp((lb-b)/0.15),size:L(46,44)}); });
+  text('모두 개별 기기 대상 비공식 테스트',{x:L(126,76),y:L(H-60,820),size:34,weight:700,align:'left',color:'#8b8b96',track:0}); });
+W8(30,'애플의 답은',{bg:INK,color:WHITE,size:260});
+at(30.5,32,(lt,lb)=>{ fill(WHITE); const s='“소수의 기기”'; const n=Math.min(s.length,Math.floor(lb/0.09)+1);
+  text(s.slice(0,n),{size:240}); if(lb>0.8) text('원인·규모는 공개하지 않았다',{y:H/2+190,size:52,weight:700,color:RED,alpha:clamp((lb-0.8)/0.2),track:-0.02}); });
+
+// 4) 카운트다운 5·4·3·2·1 → 펼치는 순간
+[5,4,3,2,1].forEach((n,i)=>{ const b=32+i;
+  at(b,b+0.5,(lt,lb)=>{ fill([INK,RED][i%2]); const k=ease.out(clamp(lb/0.25)); text(String(n),{size:760,color:WHITE,scale:1.35-0.35*k});
+    ctx.strokeStyle='rgba(255,255,255,.25)'; ctx.lineWidth=10; ctx.beginPath(); ctx.arc(W/2,H/2,430,-Math.PI/2,-Math.PI/2+Math.PI*2*clamp(lb/0.5)); ctx.stroke(); });
+  if(n>1) at(b+0.5,b+1,(lt,lb)=>{ phoneScene(i%2?OPEN:CLOSED_FRONT,lb,0.5); text(String(n),{x:L(W-220,W/2),y:L(180,430),size:L(220,420),color:RED}); });
+});
+at(36.5,37,(lt,lb)=>{ fill(BG); const p=ease.inOut(clamp(lb/0.42)); phone(p>=1?OPEN:foldIdx(1-p),{scale:1.04-0.04*p}); });
+
+// 5) 쩍 → 화면 사망 → 로고 → 제목
+at(37,41,(lt)=>crackScene(lt));
+at(41,TOTAL_BEATS,(lt,lb)=>{ logoScene(lt,1.5*B,2.5*B+0.05,3.5*B);
+  const end=(TOTAL_BEATS-41)*B; if(lt>end-0.6){ ctx.fillStyle=`rgba(0,0,0,${clamp((lt-end+0.6)/0.6)})`; ctx.fillRect(0,0,W,H);} });
+
+/* 전환용 와이프 (몇 군데) */
+const WIPES=[[8,RED],[24,INK],[32,RED]];
+
+function draw(t){
+  const b=t/B; ctx.clearRect(0,0,W,H);
+  const s=S.find(x=>b>=x.b0&&b<x.b1);
+  if(s){ s.f((b-s.b0)*B,b-s.b0); } else fill('#000');
+  WIPES.forEach(([wb,c])=>{ const d=(b-wb)/0.35; if(d>-1&&d<0) wipe(1+d,c); });
+}
+window.DUR=TOTAL_BEATS*B;
+window.ready=(async()=>{
+  await document.fonts.load('900 100px P'); await document.fonts.load('700 100px P');
+  await Promise.all(Array.from({length:N_FR},(_,i)=>new Promise(r=>{ const im=new Image(); im.onload=r; im.src='fr/f'+String(i+1).padStart(3,'0')+'.jpg'; fr[i]=im; })));
+  return true; })();
+window.draw=draw;
+</script></body></html>
