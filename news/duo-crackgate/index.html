@@ -6,14 +6,17 @@
 <title>329만원짜리 '쩍' — 아이폰 듀오 크랙게이트</title>
 <meta name="description" content="애플 첫 폴더블폰 아이폰 듀오의 힌지 균열 논란. 폴드8과의 가격·수리비 비교, 애플의 '소수 기기' 대응과 한국 소비자 대응사, 그리고 당신의 생각을 묻는 인터랙티브 뉴스.">
 <meta property="og:title" content="329만원짜리 '쩍' — 아이폰 듀오 크랙게이트">
-<meta property="og:description" content="펼친 지 6시간, 20번도 안 접었는데 화면이 갈라졌다. 애플의 답은 '소수의 기기'였다.">
+<meta property="og:description" content="출시 직후부터 접히는 부분을 따라 화면이 갈라졌다. 애플의 답은 '소수의 기기'였다.">
 <meta property="og:image" content="assets/jerryrig-lines.jpg">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800;900&display=swap">
 <style>
 :root{
   --bg:#f5f5f7; --paper:#ffffff; --ink:#111114; --sub:#5b5b66; --line:#e2e2e8;
-  --apple:#1d1d1f; --duo:#d62d20; --duo-soft:#fbe4e1; --sam:#1f5bd8; --sam-soft:#e2ebfd;
+  --apple:#1d1d1f; --red:#d62d20; --red-soft:#fbe4e1; --sam:#1428a0; --sam-soft:#e3e7f8;
+  /* 제품 컬러: 듀오 = 제품 사진(네이비·실버), 폴드8 = 삼성 브랜드 블루 */
+  --duo-navy:#2f3a45; --duo-navy-2:#4b5a69; --duo-silver:#b4b2ae; --duo-silver-2:#e4e2df;
+  --sam-blue:#1428a0; --sam-blue-2:#3d5ccc; --sam-blue-lite:#8fa3e6;
   --ok:#14804a; --warn:#b26a00;
   --sans:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
 }
@@ -42,7 +45,7 @@ b,strong{font-weight:800}
 .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:5}
 .flash.on{animation:flash .45s ease-out}
 @keyframes flash{0%{opacity:.95}100%{opacity:0}}
-.onomato{position:absolute;z-index:6;font-weight:900;font-size:clamp(64px,16vw,170px);letter-spacing:-.06em;color:var(--duo);
+.onomato{position:absolute;z-index:6;font-weight:900;font-size:clamp(64px,16vw,170px);letter-spacing:-.06em;color:var(--red);
   -webkit-text-stroke:3px #fff;paint-order:stroke fill;text-shadow:0 8px 30px rgba(0,0,0,.25);
   opacity:0;transform:scale(.4) rotate(-12deg);pointer-events:none}
 .onomato.on{animation:pop .9s cubic-bezier(.2,1.6,.4,1) forwards}
@@ -55,13 +58,13 @@ b,strong{font-weight:800}
 
 .start{position:absolute;inset:0;display:grid;place-items:center;z-index:10;background:linear-gradient(180deg,rgba(245,245,247,0) 30%,rgba(245,245,247,.92) 75%)}
 .start__box{position:absolute;bottom:clamp(24px,7svh,80px);text-align:center;padding:0 16px}
-.start__kicker{font-size:14px;font-weight:700;color:var(--duo);letter-spacing:.02em}
+.start__kicker{font-size:14px;font-weight:700;color:var(--red);letter-spacing:.02em}
 .start__title{font-size:clamp(26px,5.4vw,46px);font-weight:900;letter-spacing:-.045em;line-height:1.2;margin:6px 0 18px}
 a.btn{text-decoration:none}
 .btn{display:inline-flex;align-items:center;gap:10px;padding:15px 26px;border-radius:999px;font-weight:800;font-size:17px;transition:transform .15s,background .2s}
 .btn:active{transform:scale(.97)}
 .btn--dark{background:var(--ink);color:#fff}.btn--dark:hover{background:#000}
-.btn--red{background:var(--duo);color:#fff}
+.btn--red{background:var(--red);color:#fff}
 .btn--ghost{border:1.5px solid currentColor}
 .start__note{display:block;margin-top:12px;font-size:13px;color:var(--sub)}
 .skip{position:absolute;top:16px;right:16px;z-index:11;font-size:13px;font-weight:700;padding:8px 14px;border-radius:999px;background:rgba(0,0,0,.06);opacity:0;transition:opacity .3s}
@@ -79,7 +82,7 @@ a.btn{text-decoration:none}
 .title-card.on{opacity:1;pointer-events:auto}
 .title-card .k{font-size:14px;font-weight:700;color:#ff6b5e;letter-spacing:.04em}
 .title-card h1{font-size:clamp(38px,8.4vw,86px);font-weight:900;letter-spacing:-.055em;line-height:1.08;margin:8px 0 12px}
-.title-card h1 em{font-style:normal;color:var(--duo);-webkit-text-stroke:0}
+.title-card h1 em{font-style:normal;color:var(--red);-webkit-text-stroke:0}
 .title-card p{font-size:clamp(16px,2.4vw,20px);color:#c9c9d2;max-width:620px}
 .title-card .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:22px}
 .title-card .btn--ghost{color:#fff}
@@ -87,9 +90,9 @@ a.btn{text-decoration:none}
 /* ───────────── ARTICLE ───────────── */
 .art{background:var(--paper)}
 .lead{padding:72px 0 24px}
-.kicker{display:inline-block;font-size:13px;font-weight:800;color:var(--duo);letter-spacing:.04em;margin-bottom:12px}
+.kicker{display:inline-block;font-size:13px;font-weight:800;color:var(--red);letter-spacing:.04em;margin-bottom:12px}
 .lead h2{font-size:clamp(28px,5vw,44px);font-weight:900;letter-spacing:-.045em;line-height:1.25}
-.dek{margin-top:18px;padding-left:14px;border-left:3px solid var(--duo);color:var(--sub);font-size:16px;line-height:1.7}
+.dek{margin-top:18px;padding-left:14px;border-left:3px solid var(--red);color:var(--sub);font-size:16px;line-height:1.7}
 .dek li{list-style:none}
 .meta{margin-top:18px;font-size:13px;color:#8b8b96}
 .prose p{margin:0 0 1.25em}
@@ -100,28 +103,46 @@ a.btn{text-decoration:none}
 .sec h3{font-size:clamp(24px,4vw,34px);font-weight:900;letter-spacing:-.04em;line-height:1.3;margin-bottom:10px}
 .sec .sub{color:var(--sub);margin-bottom:30px}
 .sec--ink .sub{color:#a5a5b0}
-.num{font-size:13px;font-weight:900;color:var(--duo);letter-spacing:.08em;display:block;margin-bottom:8px}
+.num{font-size:13px;font-weight:900;color:var(--red);letter-spacing:.08em;display:block;margin-bottom:8px}
 figure{margin:28px 0}
 figcaption{font-size:13px;color:#8b8b96;margin-top:8px;line-height:1.5}
 .rounded{border-radius:16px;overflow:hidden}
 
 /* versus bars */
 .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;font-weight:700;margin-bottom:18px}
-.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:6px;vertical-align:-2px}
 .vs{display:grid;gap:26px}
 .vs__item h4{font-size:16px;font-weight:800;display:flex;justify-content:space-between;gap:12px;align-items:baseline}
-.vs__item h4 span{font-size:13px;font-weight:700;color:var(--duo);white-space:nowrap}
+.vs__item h4 span{font-size:13px;font-weight:700;color:var(--red);white-space:nowrap}
 .vs__item h4 span.good{color:var(--ok)}
 .bar{position:relative;height:34px;margin-top:8px;background:#f0f0f4;border-radius:8px;overflow:hidden}
 .bar i{position:absolute;inset:0 auto 0 0;width:0;border-radius:8px;transition:width 1.2s cubic-bezier(.2,.9,.2,1)}
 .bar b{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:800;color:#fff;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.25)}
 .bar b small{font-weight:600;opacity:.85;margin-left:6px}
-.bar.duo i{background:var(--duo)}.bar.sam i{background:var(--sam)}.bar.sam2 i{background:#7fa2ea}
+.bar.duo i{background:linear-gradient(90deg,var(--duo-navy),var(--duo-navy-2))}
+.bar.duo.lite i{background:linear-gradient(90deg,#8d8a86,var(--duo-silver) 60%,var(--duo-silver-2))}
+.bar.duo.lite b{color:var(--ink);text-shadow:none}
+.bar.sam i{background:linear-gradient(90deg,var(--sam-blue),var(--sam-blue-2))}.bar.sam2 i{background:var(--sam-blue-lite)}
+.sw-duo{background:linear-gradient(135deg,var(--duo-navy),var(--duo-navy-2))}.sw-sam{background:var(--sam-blue)}.sw-sam2{background:var(--sam-blue-lite)}
+.vs__item h4 span.muted{color:#8b8b96}
+.h4{font-size:18px;font-weight:900;letter-spacing:-.02em;margin:34px 0 14px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;counter-reset:s}
+.steps li{list-style:none;position:relative;background:var(--paper);border-radius:14px;padding:16px 14px;font-size:14.5px;font-weight:700;line-height:1.45;border:1px solid var(--line)}
+.steps li b{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--duo-navy);color:#fff;font-size:13px;margin-bottom:8px}
+.steps li.gate{border:2px solid var(--red)}.steps li.gate b{background:var(--red)}
+.steps li em{display:block;font-style:normal;font-size:12.5px;color:var(--red);margin-top:6px}
+@media(max-width:640px){.steps{grid-template-columns:1fr 1fr}}
+.note{font-size:14px;color:var(--sub);margin-top:12px}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:22px}
+.fact{background:var(--ink);color:#fff;border-radius:14px;padding:16px 14px}
+.fact b{display:block;font-size:22px;font-weight:900;letter-spacing:-.03em;color:#ff8a80}
+.fact span{font-size:13px;color:#c9c9d2;line-height:1.45;display:block;margin-top:4px}
+@media(max-width:640px){.facts{grid-template-columns:1fr 1fr}}
 .bar.dim b{color:var(--ink);text-shadow:none}
 .chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:30px}
 .chip{background:var(--bg);border-radius:14px;padding:16px 18px;font-size:15px;line-height:1.55}
 .chip strong{display:block;font-size:13px;color:var(--ok);margin-bottom:4px}
-.chip.bad strong{color:var(--duo)}
+.chip.bad strong{color:var(--red)}
 
 /* price gap */
 .gap{display:grid;gap:18px}
@@ -141,8 +162,8 @@ figcaption{font-size:13px;color:#8b8b96;margin-top:8px;line-height:1.5}
 .tl li{position:relative;list-style:none;padding:0 0 26px 40px;opacity:0;transform:translateY(16px);transition:all .6s}
 .tl li.in{opacity:1;transform:none}
 .tl li::before{content:"";position:absolute;left:4px;top:7px;width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--ink)}
-.tl li.red::before{border-color:var(--duo);background:var(--duo)}
-.tl time{display:block;font-size:13px;font-weight:800;color:var(--duo)}
+.tl li.red::before{border-color:var(--red);background:var(--red)}
+.tl time{display:block;font-size:13px;font-weight:800;color:var(--red)}
 .tl h5{font-size:17px;font-weight:800;line-height:1.45}
 .tl p{font-size:15px;color:var(--sub);margin-top:4px}
 .pics{display:grid;grid-template-columns:1fr 1.4fr;gap:12px}
@@ -155,9 +176,9 @@ figcaption{font-size:13px;color:#8b8b96;margin-top:8px;line-height:1.5}
 .fold .who small{display:block;font-weight:600;color:#8b8b96;font-size:12px}
 .fold .track{position:relative;height:28px;background:#f0f0f4;border-radius:6px;overflow:hidden}
 .fold .track i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--ink);transition:width 1.6s cubic-bezier(.2,.9,.2,1)}
-.fold .track i.r{background:var(--duo)}.fold .track i.g{background:var(--ok)}
+.fold .track i.r{background:var(--red)}.fold .track i.g{background:var(--ok)}
 .fold .track b{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:800}
-.fold .track .x{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:18px;color:var(--duo);font-weight:900}
+.fold .track .x{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:18px;color:var(--red);font-weight:900}
 @media(max-width:560px){.fold{grid-template-columns:1fr;gap:6px}}
 
 /* causes */
@@ -171,12 +192,42 @@ figcaption{font-size:13px;color:#8b8b96;margin-top:8px;line-height:1.5}
 /* fridge sim */
 .sim{display:grid;grid-template-columns:260px 1fr;gap:28px;align-items:start;background:var(--paper);border-radius:20px;padding:24px;box-shadow:0 1px 0 var(--line)}
 @media(max-width:720px){.sim{grid-template-columns:1fr}}
-.fridge{position:relative;width:220px;margin:0 auto}
-.fridge svg{width:100%}
-.fridge .door{transform-origin:16px 0;transition:transform .28s ease-in-out}
-.fridge.open .door{transform:perspective(600px) rotateY(-62deg)}
-.fridge.broken .door{transform:perspective(600px) rotateY(-14deg) translateY(5px) rotate(1.5deg)}
-.price-tag{position:absolute;top:-10px;right:-14px;background:var(--duo);color:#fff;font-weight:900;font-size:14px;padding:6px 10px;border-radius:8px;transform:rotate(8deg);box-shadow:0 4px 12px rgba(214,45,32,.3)}
+/* 양문형 스테인리스 냉장고 */
+.fr{--steel:linear-gradient(90deg,#9ea3a9 0%,#c9cdd1 8%,#e6e8ea 22%,#d3d6d9 45%,#c2c6ca 70%,#aeb2b7 92%,#979ca2 100%);
+  position:relative;width:min(240px,100%);margin:6px auto 0;perspective:900px}
+.fr__top{height:8px;margin:0 2px;border-radius:6px 6px 0 0;background:linear-gradient(180deg,#e9ebed,#b5b9be)}
+.fr__cab{position:relative;aspect-ratio:100/160;background:#5b6068;border-radius:2px;transform-style:preserve-3d}
+.fr__inside{position:absolute;inset:3px 3px 3px 51%;background:linear-gradient(180deg,#f4f9ff,#dfeaf5);overflow:hidden;box-shadow:inset 0 0 0 3px #cfd8e2}
+.fr__light{position:absolute;left:0;right:0;top:0;height:40%;background:radial-gradient(ellipse at 50% 0,rgba(255,255,240,.95),rgba(255,255,240,0) 70%)}
+.fr__shelf{position:absolute;left:4px;right:4px;height:3px;background:rgba(170,200,225,.9);box-shadow:0 1px 0 rgba(255,255,255,.8)}
+.food{position:absolute}
+.fr__door{position:absolute;top:0;bottom:0;background:var(--steel);box-shadow:inset 0 0 0 1px rgba(0,0,0,.18),inset 0 2px 0 rgba(255,255,255,.7);transition:transform .32s cubic-bezier(.4,.1,.3,1);backface-visibility:hidden}
+.fr__door::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.35) 42%,rgba(255,255,255,0) 52%);pointer-events:none}
+.fr__door--l{left:0;width:calc(48% - 1px);border-radius:2px 0 0 2px}
+.fr__door--r{right:0;width:calc(52% - 1px);border-radius:0 2px 2px 0;transform-origin:100% 50%;z-index:2}
+.fr__back{position:absolute;inset:0;background:linear-gradient(90deg,#e8edf2,#cfd8e2);transform:rotateY(180deg);backface-visibility:hidden}
+.fr__handle{position:absolute;top:20%;height:48%;width:7px;border-radius:4px;
+  background:linear-gradient(90deg,#7d838a,#f4f5f6 35%,#c4c8cc 60%,#80868d);box-shadow:2px 3px 4px rgba(0,0,0,.28)}
+.fr__door--l .fr__handle{right:7px}.fr__door--r .fr__handle{left:7px}
+.fr__disp{position:absolute;left:14%;top:30%;width:66%;aspect-ratio:1/1.45;border-radius:4px;background:linear-gradient(180deg,#6f757c,#4b5056);box-shadow:inset 0 0 0 1px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.5)}
+.fr__panel{position:relative;height:28%;margin:6% 6% 0;border-radius:2px;background:linear-gradient(180deg,#8a9097,#62686f);display:grid;grid-template-columns:auto 1fr;align-items:center}
+.fr__panel .led{grid-row:1/3;margin-left:9%;padding:1px 4px;background:#2a0c04;color:#ff6a2a;font:700 10px/1.2 ui-monospace,monospace;white-space:nowrap;border-radius:2px;text-shadow:0 0 4px #ff5a1a;box-shadow:inset 0 0 0 1px #000}
+.fr__panel i{position:absolute;width:4px;height:4px;border-radius:50%;background:#2b2f34;box-shadow:0 0 0 1px #9aa0a6}
+.fr__panel i:nth-of-type(1){right:22%;top:24%}.fr__panel i:nth-of-type(2){right:10%;top:24%}.fr__panel i:nth-of-type(3){right:22%;top:62%}.fr__panel i:nth-of-type(4){right:10%;top:62%}
+.fr__nozzle{position:absolute;left:6%;right:6%;top:40%;bottom:6%;border-radius:2px 2px 8px 8px;background:linear-gradient(180deg,#2c3035,#3d4248 70%,#55595e)}
+.fr__nozzle span{position:absolute;left:50%;top:10%;width:14%;height:16%;transform:translateX(-50%);border-radius:0 0 3px 3px;background:#1b1e21}
+.fr__kick{position:relative;height:12px;margin:0 2px;background:linear-gradient(180deg,#3a3e43,#202326);border-radius:0 0 3px 3px}
+.fr__kick i{position:absolute;bottom:-5px;width:18%;height:6px;background:#1b1d20;border-radius:0 0 2px 2px}
+.fr__kick i:first-child{left:6%}.fr__kick i:last-child{right:6%}
+.fr__crack{position:absolute;inset:0;width:100%;height:100%;z-index:3;opacity:0;pointer-events:none;transition:opacity .1s}
+.fr__crack path{fill:none;stroke:#1d2024;stroke-width:2.4;stroke-linejoin:bevel;vector-effect:non-scaling-stroke;filter:drop-shadow(1px 1px 0 rgba(255,255,255,.95))}
+.fr__crack path.thin{stroke-width:1.3}
+.fr.open .fr__door--r{transform:rotateY(78deg)}
+.fr.broken .fr__door--r{transform:rotateY(9deg) translateY(3px) rotateZ(.8deg)}
+.fr.broken .fr__crack{opacity:1}
+.fr.broken .led{color:#ff2a2a;text-shadow:0 0 6px #ff2a2a;animation:blink .6s steps(2) infinite}
+@keyframes blink{50%{opacity:.25}}
+.price-tag{position:absolute;z-index:5;top:-10px;right:-14px;background:var(--red);color:#fff;font-weight:900;font-size:14px;padding:6px 10px;border-radius:8px;transform:rotate(8deg);box-shadow:0 4px 12px rgba(214,45,32,.3)}
 .counter{text-align:center;margin-top:12px;font-weight:800}
 .counter b{font-size:30px;letter-spacing:-.03em}
 .sim .btn{width:100%;justify-content:center;margin-top:10px}
@@ -203,7 +254,7 @@ figcaption{font-size:13px;color:#8b8b96;margin-top:8px;line-height:1.5}
 .case time{font-size:12px;font-weight:800;color:#8b8b96}
 .case h5{font-size:16px;font-weight:800;line-height:1.45;margin:2px 0 6px}
 .case p{font-size:14.5px;color:var(--sub);line-height:1.6}
-.case .tag{display:inline-block;font-size:12px;font-weight:800;padding:2px 8px;border-radius:6px;margin-top:8px;background:var(--duo-soft);color:var(--duo)}
+.case .tag{display:inline-block;font-size:12px;font-weight:800;padding:2px 8px;border-radius:6px;margin-top:8px;background:var(--red-soft);color:var(--red)}
 .case .tag.g{background:#e3f4ea;color:var(--ok)}.case .tag.y{background:#fff1d6;color:var(--warn)}
 .matrix{width:100%;border-collapse:collapse;margin-top:34px;font-size:14.5px;background:var(--paper);border-radius:14px;overflow:hidden}
 .matrix th,.matrix td{padding:12px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;line-height:1.5}
@@ -211,7 +262,7 @@ figcaption{font-size:13px;color:#8b8b96;margin-top:8px;line-height:1.5}
 .matrix tbody th{font-weight:800;white-space:nowrap;width:22%}
 .pattern{display:flex;gap:0;margin:26px 0 6px;flex-wrap:wrap}
 .pattern div{flex:1 1 130px;padding:14px 12px;background:var(--paper);border:1px solid var(--line);margin:-1px 0 0 -1px;text-align:center;font-size:14px}
-.pattern div b{display:block;font-size:12px;color:var(--duo)}
+.pattern div b{display:block;font-size:12px;color:var(--red)}
 
 /* survey */
 .survey{background:#111114;color:#f2f2f5}
@@ -233,9 +284,9 @@ figcaption{font-size:13px;color:#8b8b96;margin-top:8px;line-height:1.5}
 .submit[disabled]{opacity:.35;cursor:not-allowed}
 .result{display:none;margin-top:26px;background:#fff;color:var(--ink);border-radius:20px;padding:28px 24px;animation:msgIn .5s}
 .result.on{display:block}
-.result .type{font-size:13px;font-weight:800;color:var(--duo)}
+.result .type{font-size:13px;font-weight:800;color:var(--red)}
 .result h4{font-size:clamp(24px,4.4vw,34px);font-weight:900;letter-spacing:-.04em;line-height:1.25;margin:4px 0 10px}
-.meter{position:relative;height:12px;border-radius:6px;background:linear-gradient(90deg,#c7c7cf,#ffb4ad,var(--duo));margin:22px 0 8px}
+.meter{position:relative;height:12px;border-radius:6px;background:linear-gradient(90deg,#c7c7cf,#ffb4ad,var(--red));margin:22px 0 8px}
 .meter i{position:absolute;top:50%;width:24px;height:24px;border-radius:50%;background:#fff;border:4px solid var(--ink);transform:translate(-50%,-50%);transition:left 1.2s cubic-bezier(.2,.9,.2,1);left:0}
 .meter-lab{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#8b8b96}
 .rights{margin-top:20px;display:grid;gap:8px}
@@ -301,7 +352,7 @@ figcaption{font-size:13px;color:#8b8b96;margin-top:8px;line-height:1.5}
     <div class="title-card" id="titleCard">
       <span class="k">인터랙티브 뉴스 · 아이폰 듀오 ‘크랙게이트’</span>
       <h1>329만원짜리 <em>‘쩍’</em></h1>
-      <p>펼친 지 6시간, 20번도 접지 않았는데 화면이 갈라졌다.<br>애플의 대답은 “소수의 기기”였다.</p>
+      <p>출시 직후부터 접히는 부분을 따라 화면이 갈라졌다.<br>애플의 대답은 “소수의 기기”였다.</p>
       <div class="row">
         <a class="btn btn--red" href="#article">기사 읽기 ↓</a>
         <button class="btn btn--ghost" id="replay">↻ 다시 보기</button>
@@ -325,140 +376,109 @@ figcaption{font-size:13px;color:#8b8b96;margin-top:8px;line-height:1.5}
 <main class="art" id="article">
   <header class="lead wrap">
     <span class="kicker">크랙게이트 · 소비자 리포트</span>
-    <h2>329만원 내고 ‘소수 기기’ 통보…<br>애플은 이번에도 설명하지 않았다</h2>
+    <h2>아이폰 듀오, 폴드8과 비교해보니…<br>값은 101만원↑ 무게는 53g↑ 수리비는 약 2배</h2>
     <ul class="dek">
-      <li>아이폰 듀오, 폴드8보다 101만원 비싸고 53g 무겁고 수리비는 약 2배</li>
-      <li>출시 직후 힌지 부근 화면 균열 제보…애플 “소수 기기” 교체 안내, 원인·규모는 비공개</li>
-      <li>국내 교체 재고 부족, 신규 주문 출고는 내년 1월 22일</li>
+      <li>256GB 기준 329만원 대 227만8100원…폴드8 울트라(257만7300원)보다도 71만원 높아</li>
+      <li>출시 직후 화면 균열 제보에 애플은 ‘소수 기기’라며 무상 교체 방침…원인·규모 미공개</li>
     </ul>
-    <p class="meta">2026. 10. 30 · 가격·수리비는 10월 29일 업계 기준</p>
+    <p class="meta">2026. 10. 30 · 가격·수리비는 10월 30일 업계 기준</p>
   </header>
 
   <div class="prose wrap">
     <figure class="rounded"><img src="assets/lineup.webp" alt="아이폰 듀오 색상별 제품 이미지" loading="lazy"><figcaption>애플의 첫 폴더블폰 아이폰 듀오. 10월 23일 출시됐다. (사진=애플)</figcaption></figure>
-    <p>애플의 첫 폴더블폰 <b>아이폰 듀오</b>가 출시 일주일 만에 ‘크랙게이트’에 휩싸였다. 접히는 부분을 따라 내부 화면이 갈라지거나 밝은 줄이 생겼다는 제보가 출시일인 23일부터 이어졌다. 호주의 한 이용자는 구매 약 6시간 만에, 20회도 안 되는 개폐 끝에 힌지 부근 화면이 갈라졌다고 주장했다.</p>
-    <p>애플은 현지시간 26일 “소수의 기기에서 내부 디스플레이에 영향을 미치는 문제를 인지하고 있다”며 애플케어에 연락해 교체를 받으라고 안내했다. <b>원인도, 대상 규모도 밝히지 않았다.</b> 한국에선 그 교체마저 재고가 부족하다.</p>
+    <p>애플이 첫 폴더블폰 아이폰 듀오의 내부 화면 균열 문제를 인정하고 무상 교체를 밝혔지만, <b>원인과 대상 규모는 공개하지 않았다.</b> 국내에서는 교체용 재고가 부족해 신규 주문은 내년 1월 말께 받을 수 있는 것으로 전해졌다.</p>
     <p>329만원을 정당하게 지불한 소비자 입장에서 묻는다. 이 값을 치르고 받은 것은 무엇이고, 문제가 생기면 무엇을 돌려받을 수 있나.</p>
   </div>
 
-  <!-- 01 숫자 비교 -->
+  <!-- 01 애플의 대응 -->
   <section class="sec sec--gray">
     <div class="wrap">
-      <span class="num">01 · 숫자로 본 듀오 vs 폴드8</span>
-      <h3>더 비싸고, 더 무겁고,<br>고칠 때도 두 배</h3>
-      <p class="sub">256GB 기준. 막대를 끝까지 읽어 보세요.</p>
-      <div class="legend"><span><i style="background:var(--duo)"></i>아이폰 듀오</span><span><i style="background:var(--sam)"></i>갤럭시 Z 폴드8</span><span><i style="background:#7fa2ea"></i>폴드8 울트라</span></div>
-      <div class="vs" id="vs">
-        <div class="vs__item"><h4>국내 출고가 <span>듀오가 101만1900원 비쌈</span></h4>
-          <div class="bar duo" data-v="329" data-max="400"><i></i><b>329만원</b></div>
-          <div class="bar sam2" data-v="257.73" data-max="400"><i></i><b>257만7300원 <small>울트라</small></b></div>
-          <div class="bar sam" data-v="227.81" data-max="400"><i></i><b>227만8100원</b></div></div>
-        <div class="vs__item"><h4>무게 <span>듀오가 53g 무거움</span></h4>
-          <div class="bar duo" data-v="254" data-max="300"><i></i><b>254g</b></div>
-          <div class="bar sam" data-v="201" data-max="300"><i></i><b>201g</b></div></div>
-        <div class="vs__item"><h4>내부 화면 수리비 (보증 외) <span>듀오가 약 2.1배</span></h4>
-          <div class="bar duo" data-v="164.9" data-max="400"><i></i><b>164만9000원</b></div>
-          <div class="bar sam" data-v="77.4" data-max="400"><i></i><b>77만4000원 <small>부품 회수 조건 · 미동의 시 96만8000원</small></b></div></div>
-        <div class="vs__item"><h4>기기값 + 2년 파손 보장 <span>132만3300원 차이</span></h4>
-          <div class="bar duo" data-v="383.9" data-max="400"><i></i><b>383만9000원 <small>애플케어+ 54만9000원</small></b></div>
-          <div class="bar sam" data-v="251.57" data-max="400"><i></i><b>251만5700원 <small>AI 구독클럽 2년 23만7600원</small></b></div></div>
-        <div class="vs__item"><h4>보장 가입 후 내부 화면 자기부담금 <span class="good">듀오가 유리</span></h4>
-          <div class="bar duo dim" data-v="12" data-max="400"><i></i><b>12만원</b></div>
-          <div class="bar sam dim" data-v="23.2" data-max="400"><i></i><b>약 23만2000원 <small>수리비의 30%</small></b></div></div>
+      <span class="num">01 · 애플의 답</span>
+      <h3>“소수의 기기”…무상 교체는 하지만<br>왜, 얼마나는 말하지 않았다</h3>
+      <p class="sub">23일 출시 직후부터 접히는 부분을 따라 내부 화면이 갈라지거나 밝은 줄이 생겼다는 제보가 이어졌다. 애플은 현지시간 26일 “소수의 기기에서 내부 디스플레이에 영향을 미치는 문제를 인지하고 있다”고 밝혔다.</p>
+      <div class="pics">
+        <figure class="rounded" style="margin:0"><img src="assets/report-australia.jpg" alt="힌지를 따라 내부 화면이 갈라진 아이폰 듀오 제보 사진" loading="lazy"><figcaption>힌지를 따라 갈라진 내부 화면 제보 (SNS 캡처)</figcaption></figure>
+        <figure class="rounded" style="margin:0"><img src="assets/jerryrig-lines.jpg" alt="내부 화면에 흰 줄이 생긴 아이폰 듀오" loading="lazy"><figcaption>먼지가 낀 채 구부린 뒤 줄이 생긴 내부 화면 (제리릭에브리띵 유튜브 캡처)</figcaption></figure>
       </div>
-      <div class="chips">
-        <div class="chip"><strong>듀오가 앞서는 점</strong>방진·방수 IP68(먼지 최고 6등급) vs 폴드8 IP48</div>
-        <div class="chip"><strong>듀오가 앞서는 점</strong>아이픽스잇 수리 점수 5점 vs 4점, 먼지 유입량도 더 적었다</div>
-        <div class="chip"><strong>듀오가 앞서는 점</strong>접힌 자국이 덜 보이고 무광 화면으로 반사가 적다는 평가</div>
-        <div class="chip bad"><strong>폴드8의 약점</strong>내부 화면 네 모서리가 꺼진다는 제보, 삼성은 공식 입장 없음</div>
+      <h4 class="h4">무상 교체를 받으려면 (28일 애플 안내)</h4>
+      <ol class="steps" id="steps">
+        <li><b>1</b><span>애플 ‘지원’ 앱에서 증상 접수</span></li>
+        <li><b>2</b><span>애플스토어·공인 서비스센터 점검</span></li>
+        <li class="gate"><b>3</b><span>‘결함’으로 판정돼야 교체</span><em>판정 안 되면 → 보증 외 수리 164만9000원</em></li>
+        <li><b>4</b><span>교체 · 단, 국내 교체 재고 부족</span></li>
+      </ol>
+      <p class="note">구매 경로와 애플케어+ 가입 여부는 상관없다. 애플은 교체에 차질이 없다는 입장이다.</p>
+      <div class="facts">
+        <div class="fact"><b>비공개</b><span>결함 원인</span></div>
+        <div class="fact"><b>비공개</b><span>대상 규모</span></div>
+        <div class="fact"><b>1월 말</b><span>국내 신규 주문 수령 예상</span></div>
+        <div class="fact"><b>↓</b><span>중고 거래 가격 하락 · 일부 사전예약 취소</span></div>
       </div>
     </div>
   </section>
 
-  <!-- 02 한국 가격 -->
+  <!-- 02 숫자 비교 -->
   <section class="sec">
     <div class="wrap">
-      <span class="num">02 · 한국 소비자 가격</span>
+      <span class="num">02 · 숫자로 본 듀오 vs 폴드8</span>
+      <h3>더 비싸고, 더 무겁고,<br>고칠 때도 두 배</h3>
+      <p class="sub">256GB 기준. 막대 색은 각 제품의 대표 색에서 가져왔다.</p>
+      <div class="legend"><span><i class="sw-duo"></i>아이폰 듀오</span><span><i class="sw-sam"></i>갤럭시 Z 폴드8</span><span><i class="sw-sam2"></i>폴드8 울트라</span></div>
+      <div class="vs" id="vs">
+        <div class="vs__item"><h4>국내 출고가 <span>듀오가 101만1900원 비쌈</span></h4>
+          <div class="bar duo" data-v="329" data-max="360"><i></i><b>329만원</b></div>
+          <div class="bar sam2" data-v="257.73" data-max="360"><i></i><b>257만7300원 <small>울트라</small></b></div>
+          <div class="bar sam" data-v="227.81" data-max="360"><i></i><b>227만8100원</b></div></div>
+        <div class="vs__item"><h4>무게 <span>듀오가 53g 무거움</span></h4>
+          <div class="bar duo" data-v="254" data-max="300"><i></i><b>254g</b></div>
+          <div class="bar sam" data-v="201" data-max="300"><i></i><b>201g</b></div></div>
+        <div class="vs__item"><h4>내부 화면 수리비 (보증 외) <span>듀오가 약 2.1배</span></h4>
+          <div class="bar duo" data-v="164.9" data-max="360"><i></i><b>164만9000원</b></div>
+          <div class="bar sam" data-v="77.4" data-max="360"><i></i><b>77만4000원 <small>삼성 제시 예상 수리비</small></b></div></div>
+        <div class="vs__item"><h4>애플케어+ 가입 시 <span class="muted">듀오</span></h4>
+          <div class="bar duo" data-v="54.9" data-max="360"><i></i><b>54만9000원 <small>가입비</small></b></div>
+          <div class="bar duo lite" data-v="12" data-max="360"><i></i><b>12만원 <small>내부 화면 파손 시 건당</small></b></div></div>
+      </div>
+      <div class="chips">
+        <div class="chip bad"><strong>폴드8도 제보는 있다</strong>모서리 눌림 제보에 대해 삼성전자는 9월 보도에서 “충격 완화용 쿠션 개념으로 설계된 것”이라고 설명했다.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 한국 가격 -->
+  <section class="sec sec--gray">
+    <div class="wrap">
+      <span class="num">03 · 한국 소비자 가격</span>
       <h3>미국보다 31만원 더 받는 듀오,<br>미국보다 47만원 싼 폴드8</h3>
       <p class="sub">세전 가격 비교, 환율 1달러=약 1340원</p>
       <div class="gap" id="gap">
         <div class="gap__row">
           <h4>아이폰 듀오</h4>
-          <div class="dumb" data-a="268" data-b="299" data-ca="#8b8b96" data-cb="var(--duo)" data-la="미국 1999달러 ≈ 268만원" data-lb="한국 세전 ≈ 299만원"></div>
-          <p>국내가 약 <b style="color:var(--duo)">31만원(11.7%) 비싸다</b>. 부가세를 포함한 출고가 329만원과는 약 61만원 차이.</p>
+          <div class="dumb" data-a="268" data-b="299" data-ca="#9d9a96" data-cb="var(--duo-navy)" data-la="미국 1999달러 ≈ 268만원" data-lb="한국 세전 ≈ 299만원"></div>
+          <p>국내가 약 <b style="color:var(--red)">31만원(11.7%) 비싸다</b>.</p>
         </div>
         <div class="gap__row">
           <h4>갤럭시 Z 폴드8</h4>
-          <div class="dumb" data-a="255" data-b="207" data-ca="#8b8b96" data-cb="var(--sam)" data-la="미국 1899.99달러 ≈ 255만원" data-lb="한국 세전 ≈ 207만원"></div>
-          <p>국내가 약 <b style="color:var(--sam)">47만원 낮다</b>.</p>
+          <div class="dumb" data-a="255" data-b="207" data-ca="#9d9a96" data-cb="var(--sam-blue)" data-la="미국 ≈ 255만원" data-lb="한국 세전 ≈ 207만원"></div>
+          <p>국내가 약 <b style="color:var(--sam-blue)">47만원 낮다</b>.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 03 균열 타임라인 -->
-  <section class="sec sec--gray">
+  <!-- 04 내구성 테스트 -->
+  <section class="sec">
     <div class="wrap">
-      <span class="num">03 · 균열의 일주일</span>
-      <h3>출시 6시간 만의 첫 제보,<br>사흘 뒤 나온 세 문장</h3>
-      <div class="pics">
-        <figure class="rounded" style="margin:12px 0"><img src="assets/report-australia.jpg" alt="힌지를 따라 내부 화면이 갈라진 아이폰 듀오 제보 사진" loading="lazy"><figcaption>힌지를 따라 갈라진 내부 화면 제보 (SNS 캡처)</figcaption></figure>
-        <figure class="rounded" style="margin:12px 0"><img src="assets/jerryrig-lines.jpg" alt="내부 화면에 흰 줄과 녹색 줄이 생긴 아이폰 듀오" loading="lazy"><figcaption>반대 방향으로 구부린 뒤 줄이 생긴 내부 화면 (제리릭에브리띵 유튜브 캡처)</figcaption></figure>
-      </div>
-      <ol class="tl" id="tl">
-        <li class="red"><time>10월 23일</time><h5>출시. 그날부터 “접는 부분이 갈라졌다”</h5><p>호주 이용자: 구매 약 6시간, 20회 미만 개폐 후 힌지 부근 균열 주장. 국내 신규 주문 출고 예정일은 내년 1월 22일로 안내.</p></li>
-        <li><time>10월 24일</time><h5>제리릭에브리띵 내구성 테스트</h5><p>힌지에 먼지 유입 → 닫힘 자석 기능 저하. 반대로 구부린 뒤 녹색 줄, 이후 터치 무반응.</p></li>
-        <li class="red"><time>10월 26일</time><h5>애플 “소수의 기기에서 문제 인지”</h5><p>애플케어 통한 교체 안내. 원인·대상 규모 비공개. 같은 날 잇섭은 100회 접기까지 이상 없음, 큐리어스하기는 분해로 힌지 중앙 링크 파손 확인.</p></li>
-        <li><time>10월 27일</time><h5>분해 영상 잇따라</h5><p>제리릭 “손상이 힌지 내부 부품과 맞닿는 지점에 몰려 있다, 설계 문제”. 컬러스케일 “톱니 어긋남 시 가장 얇은 지지대 파손 가능”.</p></li>
-        <li><time>10월 28일</time><h5>CNET 로봇 테스트 10만 회 돌파</h5><p>고장 날 때까지 계속. 애플은 공식 접힘 보증 횟수를 공개하지 않았다.</p></li>
-      </ol>
-
-      <h3 style="font-size:22px;margin-top:30px">몇 번 접으면 깨지나…결과는 엇갈린다</h3>
-      <p class="sub" style="margin-bottom:16px">개별 기기 한 대씩을 대상으로 한 비공식 테스트</p>
+      <span class="num">04 · 엇갈린 내구성 테스트</span>
+      <h3>몇 번 접으면 깨지나…<br>결과는 제각각</h3>
+      <p class="sub">모두 개별 기기를 대상으로 한 비공식 테스트다.</p>
       <div class="folds" id="folds">
-        <div class="fold"><div class="who">호주 이용자<small>일상 사용 주장</small></div><div class="track"><i class="r" data-v="20"></i><span class="x" data-v="20">✕</span><b>20회 미만 균열</b></div></div>
-        <div class="fold"><div class="who">잇섭<small>손 접기, 생방송</small></div><div class="track"><i class="g" data-v="100"></i><b>100회 이상 없음</b></div></div>
-        <div class="fold"><div class="who">조애나 스턴<small>로봇 테스트</small></div><div class="track"><i class="g" data-v="32000"></i><b>3만2000회+ 이상 없음</b></div></div>
-        <div class="fold"><div class="who">쿠바 클라비터<small>먼지·얼음물 가혹 조건</small></div><div class="track"><i class="r" data-v="75001"></i><span class="x" data-v="75001">✕</span><b>7만5001회째 줄</b></div></div>
-        <div class="fold"><div class="who">CNET<small>자체 로봇, 진행 중</small></div><div class="track"><i class="g" data-v="100000"></i><b>10만회+ 진행 중</b></div></div>
+        <div class="fold"><div class="who">제리릭에브리띵<small>10월 23일 · 먼지 낀 채 구부림</small></div><div class="track"><i class="r" data-v="0"></i><span class="x" data-v="0">✕</span><b>내부 화면에 줄</b></div></div>
+        <div class="fold"><div class="who">잇섭<small>26일 생방송 · 모래·낙하 포함</small></div><div class="track"><i class="g" data-v="100"></i><b>100회 균열 재현 안 됨</b></div></div>
+        <div class="fold"><div class="who">쿠바 클라비터<small>26일 · 얼음에 넣었다 꺼낸 직후</small></div><div class="track"><i class="r" data-v="75001"></i><span class="x" data-v="75001">✕</span><b>7만5001회째 줄</b></div></div>
+        <div class="fold"><div class="who">CNET<small>29일 · 로봇 4일차 종료</small></div><div class="track"><i class="g" data-v="125000"></i><b>약 12만5000회 진행</b></div></div>
       </div>
-      <p class="disclaim">※ 막대 길이는 10만 회 기준 비율. 20회·100회는 너무 짧아 보이지 않을 수 있습니다 — 그게 요점입니다.</p>
-    </div>
-  </section>
-
-  <!-- 04 원인 추정 -->
-  <section class="sec sec--ink">
-    <div class="wrap">
-      <span class="num">04 · 왜 깨지나</span>
-      <h3>힌지 한가운데,<br>가장 얇은 고리</h3>
-      <p class="sub">외부 분석가들이 내놓은 가설. 애플이 확인한 내용은 아니다.</p>
-      <div class="hingefig">
-        <svg viewBox="0 0 640 220" aria-label="힌지 단면 개념도">
-          <rect x="20" y="40" width="600" height="14" rx="4" fill="#3a3a44"/>
-          <text x="24" y="30" fill="#a5a5b0" font-size="13" font-weight="700">내부 화면(뒷면)</text>
-          <g id="links">
-            <rect x="150" y="80" width="80" height="44" rx="10" fill="#55555f"/>
-            <rect x="240" y="80" width="70" height="44" rx="10" fill="#6a6a75"/>
-            <rect x="320" y="92" width="64" height="22" rx="8" fill="#ff6b5e"/>
-            <rect x="394" y="80" width="70" height="44" rx="10" fill="#6a6a75"/>
-            <rect x="474" y="80" width="80" height="44" rx="10" fill="#55555f"/>
-          </g>
-          <path d="M340 92 L347 100 L341 106 L350 114" stroke="#fff" stroke-width="3" fill="none"/>
-          <path d="M352 88 L352 58" stroke="#ff6b5e" stroke-width="3" stroke-dasharray="4 4" marker-end="url(#ar)"/>
-          <defs><marker id="ar" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#ff6b5e"/></marker></defs>
-          <text x="352" y="150" fill="#ff8a80" font-size="14" font-weight="800" text-anchor="middle">중앙 링크 · 얇은 홈</text>
-          <text x="352" y="170" fill="#a5a5b0" font-size="12.5" text-anchor="middle">부러지면 화면 뒷면을 칠 수 있다(추정)</text>
-          <text x="190" y="200" fill="#a5a5b0" font-size="12.5" text-anchor="middle">힌지 링크</text>
-          <text x="514" y="200" fill="#a5a5b0" font-size="12.5" text-anchor="middle">힌지 링크</text>
-        </svg>
-      </div>
-      <div class="causes">
-        <div class="cause"><b>아이픽스잇</b><p>화면 아래 케이블 부근 중앙 지지대가 충분히 내려가지 않아 응력이 집중됐을 가능성. 여러 원인이 가능하고 실제 손상은 보이는 것보다 작을 수 있다고 덧붙임.</p></div>
-        <div class="cause"><b>큐리어스하기</b><p>바깥쪽으로 꺾은 뒤 접고 펴다 특정 각도에서 걸리며 파손. 분해 결과 힌지 가운데 링크가 위아래보다 얇은 홈 부분에서 부러짐.</p></div>
-        <div class="cause"><b>컬러스케일</b><p>톱니바퀴가 어긋나 힌지가 걸린 상태로 다시 펼치면 가장 얇은 지지대가 부러져 화면 뒷면을 칠 수 있다고 추정.</p></div>
-        <div class="cause"><b>제리릭에브리띵</b><p>화면 손상이 힌지 내부 부품과 맞닿는 지점에 몰려 있다며 “애플의 설계 문제”라고 비판.</p></div>
-      </div>
-      <p class="disclaim">※ 가혹 조건 테스트나 개별 기기 분해를 바탕으로 한 추정입니다. 애플은 원인을 공개하지 않았습니다.</p>
+      <p class="disclaim">※ 막대 길이는 12만5000회 기준 비율. 제리릭에브리띵은 횟수가 아닌 가혹 조건(먼지+구부림) 테스트.</p>
     </div>
   </section>
 
@@ -466,25 +486,40 @@ figcaption{font-size:13px;color:#8b8b96;margin-top:8px;line-height:1.5}
   <section class="sec sec--gray" id="fridgeSec">
     <div class="wide" style="max-width:960px">
       <span class="num">05 · 만약 냉장고였다면</span>
-      <h3>350만원짜리 냉장고를 샀다.<br>문을 열어 보자.</h3>
-      <p class="sub">스마트폰이라 무뎌졌을 뿐, 같은 일이 가전에서 벌어졌다면 어떨까. 아래 버튼으로 직접 문을 여닫아 보세요.</p>
+      <h3>350만원짜리 양문형 냉장고를 샀다.<br>문을 열어 보자.</h3>
+      <p class="sub">스마트폰이라 무뎌졌을 뿐, 같은 일이 가전에서 벌어졌다면 어떨까. 버튼을 눌러 직접 문을 여닫아 보세요.</p>
       <div class="sim">
         <div>
-          <div class="fridge" id="fridge">
+          <div class="fr" id="fridge">
             <span class="price-tag">350만원</span>
-            <svg viewBox="0 0 220 360" aria-label="냉장고 그림">
-              <rect x="16" y="6" width="190" height="344" rx="14" fill="#dfe3ea"/>
-              <rect x="26" y="18" width="170" height="318" rx="8" fill="#f7fbff"/>
-              <g fill="#cfe3f7"><rect x="36" y="80" width="150" height="5"/><rect x="36" y="150" width="150" height="5"/><rect x="36" y="220" width="150" height="5"/></g>
-              <circle cx="80" cy="120" r="14" fill="#ffcf5c"/><rect x="110" y="104" width="34" height="44" rx="6" fill="#9be0b0"/>
-              <rect x="60" y="180" width="70" height="38" rx="6" fill="#ffb4ad"/>
-              <g class="door">
-                <rect x="16" y="6" width="190" height="344" rx="14" fill="#eef0f4" stroke="#c9ced8" stroke-width="2"/>
-                <rect x="172" y="70" width="8" height="90" rx="4" fill="#b9bfca"/>
-                <line x1="16" y1="128" x2="206" y2="128" stroke="#d4d8e0" stroke-width="2"/>
-                <g id="fridgeCrack" opacity="0"><path d="M206 128 L178 140 L186 158 L150 176 L162 196 L118 222 L130 238 L96 262 L104 280 L72 300" stroke="#55555f" stroke-width="2.5" fill="none" stroke-linejoin="bevel"/><path d="M150 176 L128 172 M118 222 L98 214 M162 196 L184 206" stroke="#55555f" stroke-width="1.6" fill="none"/></g>
-              </g>
-            </svg>
+            <div class="fr__top"></div>
+            <div class="fr__cab">
+              <div class="fr__inside">
+                <div class="fr__light"></div>
+                <div class="fr__shelf" style="top:24%"></div><div class="fr__shelf" style="top:48%"></div><div class="fr__shelf" style="top:70%"></div>
+                <span class="food" style="left:14%;top:12%;width:22%;height:12%;background:#9be0b0;border-radius:6px"></span>
+                <span class="food" style="left:46%;top:9%;width:14%;height:15%;background:#ffcf5c;border-radius:50%"></span>
+                <span class="food" style="left:66%;top:6%;width:12%;height:18%;background:#fff;border:2px solid #d8dde4;border-radius:4px 4px 2px 2px"></span>
+                <span class="food" style="left:18%;top:36%;width:40%;height:11%;background:#ffb4ad;border-radius:6px"></span>
+                <span class="food" style="left:20%;top:78%;width:60%;height:16%;background:rgba(160,200,230,.45);border:2px solid rgba(160,200,230,.8);border-radius:6px"></span>
+              </div>
+              <div class="fr__door fr__door--l">
+                <div class="fr__disp">
+                  <div class="fr__panel"><span class="led" id="frLed">-18°</span><i></i><i></i><i></i><i></i></div>
+                  <div class="fr__nozzle"><span></span></div>
+                </div>
+                <div class="fr__handle"></div>
+              </div>
+              <div class="fr__door fr__door--r" id="frDoorR">
+                <div class="fr__handle"></div>
+                <div class="fr__back"></div>
+                <svg class="fr__crack" id="fridgeCrack" viewBox="0 0 52 160" preserveAspectRatio="none" aria-hidden="true">
+                  <path d="M0.5 22 L2 30 L0.6 37 L9 46 L7 54 L18 63 L15 72 L26 82 L23 92 L34 104 L32 114 L44 128" />
+                  <path d="M9 46 L20 43 L28 47 L40 44 M18 63 L30 66 L38 62 M15 72 L8 78 L10 86 M26 82 L38 86 L47 84 M23 92 L14 98 M34 104 L45 102" class="thin"/>
+                </svg>
+              </div>
+            </div>
+            <div class="fr__kick"><i></i><i></i></div>
           </div>
           <div class="counter">문 여닫은 횟수 <b id="openCount">0</b>회</div>
           <button class="btn btn--dark" id="openBtn">문 열고 닫기</button>
@@ -494,7 +529,7 @@ figcaption{font-size:13px;color:#8b8b96;margin-top:8px;line-height:1.5}
         </div>
       </div>
       <div class="law" id="law" hidden>
-        <b>법이 말하는 것</b> — 공정거래위원회 고시 ‘소비자분쟁해결기준’은 구입 후 <b>10일 이내</b> 정상 사용 중 중요한 수리가 필요한 하자가 생기면 <b>제품 교환 또는 구입가 환급</b>, 1개월 이내면 교환 또는 무상 수리를 권고한다. 국내 구매 제품의 품질 보증은 2년이다. 애플의 26일 안내문에는 ‘교체’만 있었고, 원인도, 대상 규모도, 환불도 없었다.
+        <b>법이 말하는 것</b> — 공정거래위원회 고시 ‘소비자분쟁해결기준’은 구입 후 <b>10일 이내</b> 정상 사용 중 중요한 수리가 필요한 하자가 생기면 <b>제품 교환 또는 구입가 환급</b>, 1개월 이내면 교환 또는 무상 수리를 권고한다. 애플의 안내는 ‘결함 판정 후 교체’였고, 원인도 대상 규모도 밝히지 않았다.
       </div>
     </div>
   </section>
@@ -522,14 +557,14 @@ figcaption{font-size:13px;color:#8b8b96;margin-top:8px;line-height:1.5}
           <div class="case reveal"><time>2017</time><h5>배터리게이트, 그리고 한국 소송</h5><p>구형 아이폰 성능을 사전 고지 없이 낮춘 사실이 드러났다. 애플은 사과하고 배터리 교체비를 할인했다. 미국에선 최대 5억달러 집단소송 합의, 프랑스·이탈리아에선 벌금을 냈지만, 6만여 명이 참여한 국내 손해배상 소송은 2024년 1심에서 원고 패소했다.</p><span class="tag">해외는 배상, 한국은 패소</span></div>
           <div class="case reveal"><time>2017</time><h5>‘리퍼폰’과 수리 약관</h5><p>부분 수리 대신 재생 제품(리퍼)으로 바꿔주는 방식이 오랫동안 국내 불만의 중심이었다. 공정위는 2017년 애플 공인서비스센터의 ‘수리 접수 뒤 취소 불가’ 등 약관을 불공정하다며 시정하게 했다.</p><span class="tag">공정위 시정</span></div>
           <div class="case reveal"><time>2021</time><h5>이통사 광고비 떠넘기기</h5><p>국내 이동통신사에 광고비·수리비를 떠넘겼다는 공정위 조사 끝에 1000억원 규모 상생안으로 동의의결이 확정됐다.</p><span class="tag y">제재 대신 자진 시정</span></div>
-          <div class="case reveal" style="border-left-color:var(--duo)"><time>2026</time><h5>아이폰 듀오 크랙게이트</h5><p>“소수의 기기”, 애플케어 교체 안내. 원인·규모 비공개. 국내 교체 재고 부족, 신규 출고는 석 달 뒤. 보증 외 내부 화면 수리비 164만9000원.</p><span class="tag">원인·규모 비공개</span></div>
+          <div class="case reveal" style="border-left-color:var(--red)"><time>2026</time><h5>아이폰 듀오 크랙게이트</h5><p>“소수의 기기”, 결함 판정 시 무상 교체. 원인·규모 비공개. 국내 교체 재고 부족, 신규 주문은 1월 말께. 판정 못 받으면 내부 화면 수리비 164만9000원.</p><span class="tag">원인·규모 비공개</span></div>
         </div>
         <div class="hist__col s">
           <h4>삼성전자</h4>
           <div class="case reveal"><time>2016</time><h5>갤럭시노트7 발화</h5><p>출시 2주 만에 사장이 직접 사과하고 전량 리콜을 발표했다. 결국 단종했고, 이듬해 1월 기자회견을 열어 배터리 결함이라는 원인을 공개했다.</p><span class="tag g">사과 · 전량 리콜 · 원인 공개</span></div>
           <div class="case reveal"><time>2019</time><h5>첫 갤럭시 폴드 화면 결함</h5><p>출시 전 리뷰용 제품에서 화면 결함이 잇따르자 출시를 연기하고 힌지·보호막 구조를 보완해 5개월 뒤 내놨다.</p><span class="tag g">출시 연기 · 설계 보완</span></div>
           <div class="case reveal"><time>2022</time><h5>갤럭시 S22 GOS 논란</h5><p>게임 성능을 강제로 제한한다는 비판이 커진 뒤에야 사과하고 업데이트로 해제 옵션을 줬다. 국내 집단소송도 제기됐다.</p><span class="tag">늑장 대응 비판</span></div>
-          <div class="case reveal"><time>2026</time><h5>폴드8 모서리 꺼짐 제보</h5><p>내부 화면 네 모서리를 누르면 프레임 쪽으로 꺼진다는 제보에 삼성은 공식 입장을 내지 않았다.</p><span class="tag">무대응</span></div>
+          <div class="case reveal"><time>2026</time><h5>폴드8 모서리 눌림 제보</h5><p>삼성전자는 9월 보도에서 “충격 완화용 쿠션 개념으로 설계된 것”이라고 설명했다.</p><span class="tag y">설계 의도 해명</span></div>
         </div>
       </div>
 
@@ -538,8 +573,8 @@ figcaption{font-size:13px;color:#8b8b96;margin-top:8px;line-height:1.5}
         <tbody>
           <tr><th>결함 인정</th><td>“소수의 기기” — 규모 비공개</td><td>사장 직접 사과, 전량 리콜</td></tr>
           <tr><th>원인 공개</th><td>없음</td><td>독립 기관 조사 포함 기자회견</td></tr>
-          <tr><th>소비자 선택지</th><td>애플케어 통한 교체</td><td>교환 또는 환불</td></tr>
-          <tr><th>한국 재고</th><td>교체 재고 부족, 신규 출고 내년 1월</td><td>—</td></tr>
+          <tr><th>소비자 선택지</th><td>점검 후 ‘결함’ 판정 시 무상 교체</td><td>교환 또는 환불</td></tr>
+          <tr><th>한국 재고</th><td>교체 재고 부족, 신규 주문 1월 말께</td><td>—</td></tr>
         </tbody>
       </table>
       <p class="disclaim">※ 발화 위험 제품과 화면 균열을 결함의 심각도에서 단순 비교할 수는 없습니다. 이 표는 ‘대응의 투명성’만 비교합니다.</p>
@@ -578,9 +613,9 @@ figcaption{font-size:13px;color:#8b8b96;margin-top:8px;line-height:1.5}
   <footer class="sources wrap">
     <h4>참고 · 출처</h4>
     <ul>
-      <li>가격·무게·수리비·보장 상품: 애플코리아, 삼성전자 공개 자료 및 업계(2026년 10월 29일 기준). 환율 1달러=약 1340원.</li>
-      <li>내구성 테스트: 제리릭에브리띵, 잇섭, 쿠바 클라비터, 조애나 스턴, CNET, 큐리어스하기, 컬러스케일 공개 영상·생방송. 모두 개별 기기 한 대 대상 비공식 테스트.</li>
-      <li>원인 분석: 아이픽스잇 분해 리포트 및 유튜버 분해 영상(추정이며 애플 확인 아님).</li>
+      <li>가격·무게·수리비·애플케어+: 애플코리아, 삼성전자 공개 자료 및 업계(2026년 10월 30일 기준). 환율 1달러=약 1340원.</li>
+      <li>내구성 테스트: 제리릭에브리띵, 잇섭, 쿠바 클라비터, CNET 공개 영상·생방송. 모두 개별 기기 대상 비공식 테스트.</li>
+      <li>그래프 색상: 아이폰 듀오는 제품 사진의 네이비·실버, 폴드8은 삼성 브랜드 블루를 적용.</li>
       <li>소비자 권리: 공정거래위원회 고시 ‘소비자분쟁해결기준’.</li>
       <li>사진·영상: 애플 홈페이지, SNS 제보, 제리릭에브리띵 유튜브 화면 캡처. 인트로의 균열·로고 분할은 연출입니다.</li>
     </ul>
@@ -759,12 +794,12 @@ async function runIntro(){
   caption('그리고…');
   await sleep(450); if(!alive()) return;
   bgmCut('calm'); crackHinge(); boom($('#stage'), 1);
-  caption('펼친 지 6시간.<small>호주 이용자 주장 · 20회도 안 되는 개폐 끝에 힌지 부근 화면이 갈라졌다</small>');
+  caption('출시 첫날부터.<small>10월 23일 · 접히는 부분을 따라 내부 화면이 갈라졌다는 제보가 이어졌다</small>');
   await sleep(900); if(!alive()) return;
   glitch(); $('#greenLine').setAttribute('opacity',1); buzz();
   await sleep(700); if(!alive()) return;
   $('#dead').setAttribute('opacity',.94); $('#greenLine').setAttribute('opacity',.25); buzz();
-  caption('화면엔 줄이 생겼고, 터치는 먹통이 됐다.<small>제리릭에브리띵 내구성 테스트(10월 24일)</small>');
+  caption('화면엔 밝은 줄이 생겼다.<small>제리릭에브리띵 · 먼지가 낀 채 구부리자 내부 화면에 줄(10월 23일)</small>');
   await sleep(1900); if(!alive()) return;
   // → 로고 장면
   intro.classList.add('dark'); $('#scene1').hidden=true; caption(''); bgmPlay('dark', 1500);
@@ -857,12 +892,12 @@ const io = new IntersectionObserver(es=>es.forEach(e=>{
   else if(t.id==='gap') t.querySelectorAll('.dumb').forEach(drawDumb);
   else if(t.id==='tl') t.querySelectorAll('li').forEach((li,i)=>setTimeout(()=>li.classList.add('in'),i*180));
   else if(t.id==='folds') t.querySelectorAll('.track').forEach((tr,i)=>setTimeout(()=>{
-      const v=+tr.querySelector('i').dataset.v, w=Math.max(.4,v/100000*100);
+      const v=+tr.querySelector('i').dataset.v, w=Math.max(.6,v/125000*100);
       tr.querySelector('i').style.width=w+'%'; const x=tr.querySelector('.x'); if(x) x.style.left=`calc(${w}% + 2px)`;
     },i*200));
   else t.classList.add('in');
 }),{threshold:.25});
-['#vs','#gap','#tl','#folds'].forEach(s=>io.observe($(s)));
+['#vs','#gap','#folds'].forEach(s=>io.observe($(s)));
 document.querySelectorAll('.reveal').forEach(e=>io.observe(e));
 document.querySelectorAll('.fold .x').forEach(x=>x.style.left='2px');
 
@@ -890,9 +925,9 @@ const CO='제조사 고객지원';
 function menu(){
   const left = [];
   if(!asked.cause) left.push(['원인이 뭔가요?',()=>{asked.cause=1; say('co','죄송하지만 원인과 대상 규모는 공개하지 않습니다.',CO); setTimeout(menu,700);}]);
-  if(!asked.when)  left.push(['교체는 언제 되나요?',()=>{asked.when=1; say('co','현재 국내 교체용 재고가 부족합니다. 새로 주문하시면 출고 예정일은 <b>석 달 뒤</b>입니다.',CO); setTimeout(menu,700);}]);
-  if(!asked.refund)left.push(['그냥 환불해 주세요.',()=>{asked.refund=1; say('co','교체 절차를 안내해 드리겠습니다. 고객지원에 연락해 주세요.',CO); setTimeout(menu,700);}]);
-  if(!asked.other) left.push(['교체품도 똑같이 깨지면요?',()=>{asked.other=1; say('co','소수의 제품에서 발생하는 문제입니다.',CO); setTimeout(menu,700);}]);
+  if(!asked.when)  left.push(['어떻게 교체받나요?',()=>{asked.when=1; say('co','앱에서 증상을 접수하신 뒤 서비스센터 점검을 받으셔야 합니다. <b>결함으로 판정되면</b> 교체해 드립니다. 다만 현재 국내 교체용 재고가 부족합니다.',CO); setTimeout(menu,700);}]);
+  if(!asked.refund)left.push(['그냥 환불해 주세요.',()=>{asked.refund=1; say('co','교체 절차로 안내해 드리겠습니다.',CO); setTimeout(menu,700);}]);
+  if(!asked.other) left.push(['결함이 아니라고 판정되면요?',()=>{asked.other=1; say('co','보증 외 수리로 진행됩니다. 문짝 교체 비용은 <b>구입가의 절반인 175만원</b>입니다.',CO); say('sys','※ 듀오 보증 외 내부 화면 수리비 164만9000원 = 출고가 329만원의 약 50%'); setTimeout(menu,900);}]);
   if(left.length) replies(left);
   else { say('sys','— 상담이 종료되었습니다 —'); $('#law').hidden=false; $('#law').scrollIntoView({block:'nearest',behavior:'smooth'}); }
 }
@@ -900,28 +935,28 @@ const asked={};
 $('#openBtn').addEventListener('click',()=>{
   if(broken) return;
   audio(); opens++; $('#openCount').textContent=opens;
-  fridge.classList.add('open'); setTimeout(()=>fridge.classList.remove('open'),300);
+  fridge.classList.add('open'); setTimeout(()=>fridge.classList.remove('open'),340);
   if(opens===1) say('sys','첫날. 장 본 것을 넣는다.');
-  if(opens===8) say('sys','저녁 준비. 문을 여닫는다.');
+  if(opens===8) say('sys','일주일째. 저녁 준비로 문을 여닫는다.');
   if(opens>=17){
     broken=true; $('#openBtn').disabled=true; $('#openBtn').textContent='문이 닫히지 않습니다';
     setTimeout(()=>{
-      fridge.classList.add('broken'); $('#fridgeCrack').setAttribute('opacity',1); crackSound(1);
+      fridge.classList.add('broken'); $('#frLed').textContent='E-5'; crackSound(1);
       fridge.classList.remove('shake'); void fridge.offsetWidth; fridge.classList.add('shake');
-      say('sys',`<b style="color:var(--duo)">쩍.</b> 산 지 6시간, ${opens}번째. 문틀이 갈라지고 냉동실이 녹기 시작했다.`);
-      setTimeout(()=>{ say('me','350만원 주고 산 냉장고가 하루도 안 돼 갈라졌어요.'); },900);
-      setTimeout(()=>{ say('co','소수의 제품에서 문에 영향을 미치는 문제를 인지하고 있습니다. 고객지원에 연락하시면 교체해 드립니다.',CO); },2000);
+      say('sys',`<b style="color:var(--red)">쩍.</b> ${opens}번째. 두 문이 맞닿는 이음새를 따라 문짝이 갈라졌다. 듀오로 치면 힌지다.`);
+      setTimeout(()=>{ say('me','350만원 주고 산 냉장고가 일주일 만에 갈라졌어요.'); },900);
+      setTimeout(()=>{ say('co','소수의 제품에서 문에 영향을 미치는 문제를 인지하고 있습니다. 무상으로 교체해 드립니다.',CO); },2000);
       setTimeout(menu,2900);
-    },320);
+    },360);
   }
 });
 
 /* ───────── 설문 ───────── */
 const QUESTIONS = [
-  {q:'350만원 냉장고가 산 지 6시간 만에 갈라졌다. 제조사가 “소수 제품의 문제, 교체해 주겠다. 원인은 비공개”라고 한다면?',
+  {q:'350만원 냉장고가 산 지 일주일 만에 갈라졌다. 제조사가 “소수 제품의 문제, 점검 후 결함이면 교체해 주겠다. 원인은 비공개”라고 한다면?',
    o:[['교체해 준다니 충분하다',0],['교체는 받되 원인 설명은 들어야 한다',1],['환불받고 싶다',2],['원인 공개와 전체 리콜이 먼저다',3]]},
-  {q:'아이폰 듀오에 같은 일이 생겼다. 교체품 재고가 없어 언제 받을지 모른다. 그동안 대체폰도 없다면?',
-   o:[['기다린다',0],['애플에 대체 기기를 요구한다',1],['소비자원(1372)에 피해구제를 신청한다',2],['환불받고 다른 제품을 산다',3]]},
+  {q:'아이폰 듀오에 같은 일이 생겼다. 점검에서 ‘결함 아님’ 판정이 나오면 수리비는 164만9000원이다. 어떻게 하겠나?',
+   o:[['수리비를 내고 고친다',0],['재점검을 요구한다',1],['소비자원(1372)에 피해구제를 신청한다',2],['환불을 요구하고 다른 제품을 산다',3]]},
   {q:'애플이 결함의 원인과 대상 규모를 공개해야 한다고 보나요?',scale:true,
    o:[['전혀 아니다',0],['아니다',.75],['보통',1.5],['그렇다',2.25],['매우 그렇다',3]]},
   {q:'듀오는 미국보다 세전 31만원(11.7%) 비싸고, 보증 외 내부 화면 수리비는 164만9000원입니다. 한국 소비자가 차별받는다고 느끼나요?',scale:true,
